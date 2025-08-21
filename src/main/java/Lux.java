@@ -1,6 +1,10 @@
 import java.util.Scanner;
+import java.util.List;
+import java.util.ArrayList;
 
 public class Lux {
+    private static List<String> userList = new ArrayList<>();
+
     public static void main(String[] args) {
         greet();
         handleConvo();
@@ -13,9 +17,18 @@ public class Lux {
 
     private static void handleConvo() {
         Scanner userInput = new Scanner(System.in);
+
         String userInputInfo = userInput.nextLine();
         while (!userInputInfo.equalsIgnoreCase("bye")) {
-            System.out.printf("%s\n\n", userInputInfo);
+            if (userInputInfo.equalsIgnoreCase("list")) {
+                for (int i = 0; i < userList.size(); i++) {
+                    System.out.printf("%d. %s\n", i + 1, userList.get(i));
+                }
+                System.out.println();
+            } else {
+                userList.add(userInputInfo);
+                System.out.println("added: " + userInputInfo + "\n");
+            }
             userInputInfo = userInput.nextLine();
         }
     }
