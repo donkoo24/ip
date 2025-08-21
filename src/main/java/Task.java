@@ -1,10 +1,12 @@
 public class Task {
     private String taskName;
     private boolean isCompleted;
+    private static int numberOfTasks = 0;
 
     public Task(String taskName) {
         this.taskName = taskName;
         this.isCompleted = false;
+        numberOfTasks++;
     }
 
     public void markCompleted() {
@@ -13,6 +15,10 @@ public class Task {
 
     public void unmarkCompleted() {
         this.isCompleted = false;
+    }
+
+    public static int getNumberOfTasks() {
+        return numberOfTasks;
     }
 
     @Override
