@@ -21,13 +21,9 @@ public class Lux {
         String userInputInfo = userInput.nextLine();
         while (!userInputInfo.equalsIgnoreCase("bye")) {
             if (userInputInfo.equalsIgnoreCase("list")) {
-                for (int i = 0; i < userList.size(); i++) {
-                    System.out.printf("%d. %s\n", i + 1, userList.get(i));
-                }
-                System.out.println();
+                showList();
             } else {
-                userList.add(userInputInfo);
-                System.out.println("added: " + userInputInfo + "\n");
+                addListItem(userInputInfo);
             }
             userInputInfo = userInput.nextLine();
         }
@@ -35,5 +31,17 @@ public class Lux {
 
     private static void endConvo() {
         System.out.println("Bye. Hope to see you again soon!");
+    }
+
+    private static void addListItem(String item) {
+        userList.add(item);
+        System.out.println("added: " + item + "\n");
+    }
+
+    private static void showList() {
+        for (int i = 0; i < userList.size(); i++) {
+            System.out.printf("%d. %s\n", i + 1, userList.get(i));
+        }
+        System.out.println();
     }
 }
