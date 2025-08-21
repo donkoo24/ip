@@ -45,8 +45,29 @@ public class Lux {
     private static void showList() {
         System.out.println("Here are the tasks in your list");
         for (int i = 0; i < userList.size(); i++) {
-            System.out.println(userList.get(i));
+            System.out.printf("%d. %s\n", i + 1, userList.get(i));
         }
         System.out.println();
+    }
+
+    private static void markTask(int taskNumber) {
+        if (taskNumber > userList.size() || taskNumber <= 0) {
+            return;
+        } else {
+            Task actionTask = userList.get(taskNumber - 1);
+            actionTask.markCompleted();
+            System.out.println("Nice! I've marked this task as done:\n" + actionTask.toString() + "\n");
+        }
+    }
+
+    private static void unmarkTask(int taskNumber) {
+        if (taskNumber > userList.size() || taskNumber <= 0) {
+            return;
+        } else {
+            Task actionTask = userList.get(taskNumber - 1);
+            actionTask.unmarkCompleted();
+            System.out.println("Ok, I've marked this task as not done yet:\n" +  actionTask.toString() + "\n");
+        }
+
     }
 }

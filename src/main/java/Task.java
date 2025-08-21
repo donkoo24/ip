@@ -1,28 +1,26 @@
 public class Task {
-    private int taskNumber;
     private String taskName;
     private boolean isCompleted;
 
-    public Task(int taskNumber, String taskName) {
-        this.taskNumber = taskNumber;
+    public Task(String taskName) {
         this.taskName = taskName;
         this.isCompleted = false;
     }
 
-    private void markCompleted() {
+    public void markCompleted() {
         this.isCompleted = true;
     }
 
-    private void unmarkCompleted() {
+    public void unmarkCompleted() {
         this.isCompleted = false;
     }
 
     @Override
     public String toString() {
         if (isCompleted) {
-            return String.format("%d.[X] %s", taskNumber, taskName);
+            return String.format("[X] %s", taskName);
         } else {
-            return String.format("%d.[ ] %s", taskNumber, taskName);
+            return String.format("[ ] %s", taskName);
         }
     }
 }
