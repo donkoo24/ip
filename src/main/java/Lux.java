@@ -6,11 +6,11 @@ import java.util.regex.*;
 
 public class Lux {
     private static List<Task> userList = new ArrayList<>();
-    private final static Pattern MARKPATTERN = Pattern.compile("(^mark) (\\d+)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern UNMARKPATTERN = Pattern.compile("^(unmark) (\\d+)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern TODOPATTERN = Pattern.compile("(todo) (.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern DEADLINEPATTERN = Pattern.compile("(deadline) (.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern EVENTPATTERN = Pattern.compile("(event) (.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern MARKPATTERN = Pattern.compile("(^mark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern UNMARKPATTERN = Pattern.compile("^(unmark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern TODOPATTERN = Pattern.compile("(todo)\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern DEADLINEPATTERN = Pattern.compile("(deadline)\\s(.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern EVENTPATTERN = Pattern.compile("(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) {
         greet();
@@ -39,7 +39,13 @@ public class Lux {
                 } else if (unmarkMatcher.find()) {
                     unmarkTask(Integer.parseInt(unmarkMatcher.group(2)));
                 } else {
-                    addListItem(userInputInfo);
+                    try {
+                        addListItem(userInputInfo);
+                    } catch (NoDescriptionException e) {
+                        System.out.println(e.getMessage());
+                    } catch (NoCommandException e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
             }
             userInputInfo = userInput.nextLine();
@@ -50,23 +56,41 @@ public class Lux {
         System.out.println("Bye. Hope to see you again soon!");
     }
 
-    private static void addListItem(String item) {
+    private static void addListItem(String item) throws NoDescriptionException, NoCommandException {
         Matcher toDoMatcher = TODOPATTERN.matcher(item);
         Matcher deadlineMatcher = DEADLINEPATTERN.matcher(item);
         Matcher eventMatcher = EVENTPATTERN.matcher(item);
 
         if (toDoMatcher.find()) {
+            if (toDoMatcher.group(2).isBlank()) {
+                throw new NoDescriptionException("bruh, task name cannot be empty la");
+            }
             Task itemToAdd = new ToDo(toDoMatcher.group(2));
             userList.add(itemToAdd);
             System.out.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list" + "\n");
         } else if (deadlineMatcher.find()) {
+            if (deadlineMatcher.group(2).isBlank()) {
+                throw new NoDescriptionException("bruh, task name cannot be empty la");
+            } else if (deadlineMatcher.group(3).isBlank()) {
+                throw new NoDescriptionException("bruh, deadline cannot be empty la, if not go use todo");
+            }
+
             Task itemToAdd = new Deadline(deadlineMatcher.group(2), deadlineMatcher.group(3));
             userList.add(itemToAdd);
             System.out.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
         } else if (eventMatcher.find()) {
+            if (eventMatcher.group(2).isBlank()) {
+                throw new NoDescriptionException("bruh, task name cannot be empty la");
+            } else if (eventMatcher.group(3).isBlank()) {
+                throw new NoDescriptionException("bruh, start field cannot be empty la, if not go use todo");
+            } else if (eventMatcher.group(4).isBlank()) {
+                throw new NoDescriptionException("bruh, end field cannot be empty la, if not go use deadline or todo");
+            }
             Task itemToAdd = new Event(eventMatcher.group(2), eventMatcher.group(3), eventMatcher.group(4));
             userList.add(itemToAdd);
             System.out.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
+        } else {
+            throw new NoCommandException("bruh, idk what this mean. If you are using a valid command, make sure to have the necessary descriptions.");
         }
 
     }
