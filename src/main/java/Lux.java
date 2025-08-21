@@ -6,6 +6,8 @@ import java.util.regex.*;
 
 public class Lux {
     private static List<Task> userList = new ArrayList<>();
+    private final static Pattern MARKPATTERN = Pattern.compile("(^mark) (\\d+)");
+    private final static Pattern UNMARKPATTERN = Pattern.compile("^(unmark) (\\d+)");
 
     public static void main(String[] args) {
         greet();
@@ -19,13 +21,23 @@ public class Lux {
 
     private static void handleConvo() {
         Scanner userInput = new Scanner(System.in);
-
         String userInputInfo = userInput.nextLine();
+
+
+
         while (!userInputInfo.equalsIgnoreCase("bye")) {
             if (userInputInfo.equalsIgnoreCase("list")) {
                 showList();
             } else {
-                addListItem(userInputInfo);
+                Matcher markMatcher = MARKPATTERN.matcher(userInputInfo.toLowerCase());
+                Matcher unmarkMatcher = UNMARKPATTERN.matcher(userInputInfo.toLowerCase());
+                if (markMatcher.find()) {
+                    markTask(Integer.parseInt(markMatcher.group(2)));
+                } else if (unmarkMatcher.find()) {
+                    unmarkTask(Integer.parseInt(unmarkMatcher.group(2)));
+                } else {
+                    addListItem(userInputInfo);
+                }
             }
             userInputInfo = userInput.nextLine();
         }
@@ -36,8 +48,7 @@ public class Lux {
     }
 
     private static void addListItem(String item) {
-        int taskId = userList.size();
-        Task itemToAdd = new Task (taskId + 1, item);
+        Task itemToAdd = new Task (item);
         userList.add(itemToAdd);
         System.out.println("added: " + item + "\n");
     }
