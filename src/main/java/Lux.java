@@ -6,12 +6,12 @@ import java.util.regex.*;
 
 public class Lux {
     private static List<Task> userList = new ArrayList<>();
-    private final static Pattern MARKPATTERN = Pattern.compile("(^mark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern UNMARKPATTERN = Pattern.compile("^(unmark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern TODOPATTERN = Pattern.compile("(todo)\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern DEADLINEPATTERN = Pattern.compile("(deadline)\\s(.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern EVENTPATTERN = Pattern.compile("(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern DELETEPATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern MARK_PATTERN = Pattern.compile("(^mark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern UNMARK_PATTERN = Pattern.compile("^(unmark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern TODO_PATTERN = Pattern.compile("(todo)\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern DEADLINE_PATTERN = Pattern.compile("(deadline)\\s(.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern EVENT_PATTERN = Pattern.compile("(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) {
         greet();
@@ -33,9 +33,9 @@ public class Lux {
             if (userInputInfo.equalsIgnoreCase("list")) {
                 showList();
             } else {
-                Matcher markMatcher = MARKPATTERN.matcher(userInputInfo);
-                Matcher unmarkMatcher = UNMARKPATTERN.matcher(userInputInfo);
-                Matcher deleteMatcher = DELETEPATTERN.matcher(userInputInfo);
+                Matcher markMatcher = MARK_PATTERN.matcher(userInputInfo);
+                Matcher unmarkMatcher = UNMARK_PATTERN.matcher(userInputInfo);
+                Matcher deleteMatcher = DELETE_PATTERN.matcher(userInputInfo);
                 if (markMatcher.find()) {
                     markTask(Integer.parseInt(markMatcher.group(2)));
                 } else if (unmarkMatcher.find()) {
@@ -63,9 +63,9 @@ public class Lux {
     }
 
     private static void addListItem(String item) throws NoDescriptionException, NoCommandException {
-        Matcher toDoMatcher = TODOPATTERN.matcher(item);
-        Matcher deadlineMatcher = DEADLINEPATTERN.matcher(item);
-        Matcher eventMatcher = EVENTPATTERN.matcher(item);
+        Matcher toDoMatcher = TODO_PATTERN.matcher(item);
+        Matcher deadlineMatcher = DEADLINE_PATTERN.matcher(item);
+        Matcher eventMatcher = EVENT_PATTERN.matcher(item);
 
         if (toDoMatcher.find()) {
             if (toDoMatcher.group(2).isBlank()) {
