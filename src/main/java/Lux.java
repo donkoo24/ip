@@ -1,9 +1,11 @@
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.regex.*;
+
 
 public class Lux {
-    private static List<String> userList = new ArrayList<>();
+    private static List<Task> userList = new ArrayList<>();
 
     public static void main(String[] args) {
         greet();
@@ -34,13 +36,16 @@ public class Lux {
     }
 
     private static void addListItem(String item) {
-        userList.add(item);
+        int taskId = userList.size();
+        Task itemToAdd = new Task (taskId + 1, item);
+        userList.add(itemToAdd);
         System.out.println("added: " + item + "\n");
     }
 
     private static void showList() {
+        System.out.println("Here are the tasks in your list");
         for (int i = 0; i < userList.size(); i++) {
-            System.out.printf("%d. %s\n", i + 1, userList.get(i));
+            System.out.println(userList.get(i));
         }
         System.out.println();
     }
