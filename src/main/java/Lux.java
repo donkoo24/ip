@@ -11,6 +11,7 @@ public class Lux {
     private final static Pattern TODOPATTERN = Pattern.compile("(todo)\\s(.*)", Pattern.CASE_INSENSITIVE);
     private final static Pattern DEADLINEPATTERN = Pattern.compile("(deadline)\\s(.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
     private final static Pattern EVENTPATTERN = Pattern.compile("(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern DELETEPATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) {
         greet();
@@ -34,11 +35,16 @@ public class Lux {
             } else {
                 Matcher markMatcher = MARKPATTERN.matcher(userInputInfo);
                 Matcher unmarkMatcher = UNMARKPATTERN.matcher(userInputInfo);
+                Matcher deleteMatcher = DELETEPATTERN.matcher(userInputInfo);
                 if (markMatcher.find()) {
                     markTask(Integer.parseInt(markMatcher.group(2)));
                 } else if (unmarkMatcher.find()) {
                     unmarkTask(Integer.parseInt(unmarkMatcher.group(2)));
-                } else {
+                } else if (deleteMatcher.find()) {
+                    deleteTask(Integer.parseInt(deleteMatcher.group(2)));
+                }
+
+                else {
                     try {
                         addListItem(userInputInfo);
                     } catch (NoDescriptionException e) {
@@ -122,5 +128,16 @@ public class Lux {
             System.out.println("Ok, I've marked this task as not done yet:\n" +  actionTask.toString() + "\n");
         }
 
+    }
+
+    private static void deleteTask(int taskNumber) {
+        if (taskNumber > userList.size() || taskNumber <= 0) {
+            return;
+        } else {
+            Task removedTask = userList.get(taskNumber - 1);
+            userList.remove(taskNumber - 1);
+            Task.reduceTaskCount();
+            System.out.println("Noted, I've removed this task:\n" + removedTask.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
+        }
     }
 }

@@ -21,6 +21,10 @@ public class Task {
         return numberOfTasks;
     }
 
+    public static void reduceTaskCount() {
+        numberOfTasks--;
+    }
+
     @Override
     public String toString() {
         if (isCompleted) {
