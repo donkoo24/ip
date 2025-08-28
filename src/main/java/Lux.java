@@ -1,7 +1,9 @@
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.regex.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 
 public class Lux {
@@ -13,8 +15,9 @@ public class Lux {
     private final static Pattern EVENT_PATTERN = Pattern.compile("(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
     private final static Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         greet();
+        loadTask();
         handleConvo();
         endConvo();
     }
@@ -59,6 +62,18 @@ public class Lux {
     }
 
     private static void endConvo() {
+        StringBuilder saveData = new StringBuilder();
+
+        for (int i = 0; i < userList.size(); i++) {
+            saveData.append(userList.get(i)).append(System.lineSeparator());
+        }
+
+        try {
+            SaveFileManager.updateSaveFile(saveData.toString());
+        } catch (IOException e) {
+            System.out.println("Did not manage to save task data"  + e.getMessage());
+        }
+
         System.out.println("Bye. Hope to see you again soon!");
     }
 
@@ -139,5 +154,10 @@ public class Lux {
             Task.reduceTaskCount();
             System.out.println("Noted, I've removed this task:\n" + removedTask.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
         }
+    }
+
+    private static void loadTask() throws IOException {
+        SaveFileManager.getOrCreateSaveFile();
+        SaveFileManager.loadData(userList);
     }
 }
