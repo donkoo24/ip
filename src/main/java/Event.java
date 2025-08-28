@@ -1,11 +1,13 @@
+import java.time.LocalDate;
+
 public class Event extends Task {
-    private String start;
-    private String end;
+    private ParsedDate start;
+    private ParsedDate end;
 
     public Event (String taskName, String start, String end) {
         super(taskName);
-        this.start = start;
-        this.end = end;
+        this.start = DateParser.parseDate(start);
+        this.end = DateParser.parseDate(end);
     }
 
     @Override

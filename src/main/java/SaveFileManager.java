@@ -51,28 +51,34 @@ public class SaveFileManager {
 
                 } else if (line.startsWith("[D]")) {
                     Pattern pattern = Pattern.compile("\\[(.)\\]\\[(.)\\]\\s(.*)\\s\\(by:\\s(.*)\\)");
-                    String taskName = pattern.matcher(line).group(3);
-                    String taskMark = pattern.matcher(line).group(2);
-                    String taskDeadline = pattern.matcher(line).group(4);
-                    Deadline itemToAdd = new Deadline(taskName, taskDeadline);
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.matches()) {
+                        String taskName = matcher.group(3);
+                        String taskMark = matcher.group(2);
+                        String taskDeadline = matcher.group(4);
+                        Deadline itemToAdd = new Deadline(taskName, taskDeadline);
 
-                    if (taskMark.equals("X")) {
-                        itemToAdd.markCompleted();
+                        if (taskMark.equals("X")) {
+                            itemToAdd.markCompleted();
+                        }
+                        taskList.add(itemToAdd);
                     }
-                    taskList.add(itemToAdd);
 
                 } else if (line.startsWith("[E]")) {
                     Pattern pattern = Pattern.compile("\\[(.)\\]\\[(.)\\]\\s(.*)\\s\\(from:\\s(.*)\\sto:\\s(.*)\\)");
-                    String taskName = pattern.matcher(line).group(3);
-                    String taskMark = pattern.matcher(line).group(2);
-                    String taskFrom = pattern.matcher(line).group(4);
-                    String taskTo = pattern.matcher(line).group(5);
-                    Event itemToAdd = new Event(taskName, taskFrom, taskTo);
+                    Matcher matcher = pattern.matcher(line);
+                    if (matcher.matches()) {
+                        String taskName = matcher.group(3);
+                        String taskMark = matcher.group(2);
+                        String taskFrom = matcher.group(4);
+                        String taskTo = matcher.group(5);
+                        Event itemToAdd = new Event(taskName, taskFrom, taskTo);
 
-                    if (taskMark.equals("X")) {
-                        itemToAdd.markCompleted();
+                        if (taskMark.equals("X")) {
+                            itemToAdd.markCompleted();
+                        }
+                        taskList.add(itemToAdd);
                     }
-                    taskList.add(itemToAdd);
 
                 }
             }
