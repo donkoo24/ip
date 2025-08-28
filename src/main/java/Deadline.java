@@ -1,9 +1,12 @@
+import java.time.format.DateTimeFormatter;
+
 public class Deadline extends Task {
-    private String deadline;
+    private ParsedDate deadline;
+    private DateTimeFormatter dateFormat;
 
     public Deadline(String taskName, String deadline) {
         super(taskName);
-        this.deadline = deadline;
+        this.deadline = DateParser.parseDate(deadline);
     }
 
     @Override
