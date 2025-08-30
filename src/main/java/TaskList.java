@@ -8,9 +8,9 @@ public class TaskList {
 
     public TaskList() {}
 
-    public static void addListItem(Task t, Ui ui) {
+    public void addListItem(Task t, Ui ui) {
         taskList.add(t);
-        ui.println("Got it. I've added this task:\n" + t.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list" + "\n");
+        ui.speak("Got it. I've added this task:\n" + t.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list" + "\n");
     }
 
     public int getSize() {
@@ -26,11 +26,11 @@ public class TaskList {
     }
 
     public void showList (Ui ui) {
-        ui.println("Here are the tasks in your list");
+        ui.speak("Here are the tasks in your list");
         for (int i = 0; i < taskList.size(); i++) {
             System.out.printf("%d. %s\n", i + 1, taskList.get(i));
         }
-        ui.println("");
+        ui.speak("");
     }
 
     public void markTask (int taskNumber, Ui ui) {
@@ -39,7 +39,7 @@ public class TaskList {
         } else {
             Task actionTask = taskList.get(taskNumber - 1);
             actionTask.markCompleted();
-            ui.println("Nice! I've marked this task as done:\n" + actionTask.toString() + "\n");
+            ui.speak("Nice! I've marked this task as done:\n" + actionTask.toString() + "\n");
         }
     }
 
@@ -49,7 +49,7 @@ public class TaskList {
         } else {
             Task actionTask = taskList.get(taskNumber - 1);
             actionTask.unmarkCompleted();
-            ui.println("Ok, I've marked this task as not done yet:\n" +  actionTask.toString() + "\n");
+            ui.speak("Ok, I've marked this task as not done yet:\n" +  actionTask.toString() + "\n");
         }
     }
 
@@ -60,7 +60,7 @@ public class TaskList {
             Task removedTask = taskList.get(taskNumber - 1);
             taskList.remove(taskNumber - 1);
             Task.reduceTaskCount();
-            ui.println("Noted, I've removed this task:\n" + removedTask.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
+            ui.speak("Noted, I've removed this task:\n" + removedTask.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
         }
     }
 

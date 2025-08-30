@@ -1,8 +1,6 @@
 import UI.Ui;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -18,17 +16,30 @@ public class Lux {
 
     public static void main(String[] args) throws IOException {
         Ui ui = new Ui();
+        CommandParser cp = new CommandParser();
 
         ui.greet();
         loadTask();
-        handleConvo(ui);
-        endConvo(ui);
+        handleConvo(ui, cp);
     }
 
-    private static void handleConvo(Ui ui) {
-        String userInputInfo = ui.readline();
+    private static void handleConvo(Ui ui, CommandParser cp) {
 
-        while (!userInputInfo.equalsIgnoreCase("bye")) {
+        while (true) {
+            try {
+                String userInputInfo = ui.readline();
+                Command cmd = cp.parse(userInputInfo);
+                cmd.execute(taskList, ui);
+                if (cmd.isExit()) {
+                    break;
+                }
+
+            } catch (NoDescriptionException | NoCommandException e){
+                ui.speak(e.getMessage());
+            }
+        }
+
+        /*while (!userInputInfo.equalsIgnoreCase("bye")) {
             if (userInputInfo.equalsIgnoreCase("list")) {
                 taskList.showList(ui);
             } else {
@@ -47,14 +58,16 @@ public class Lux {
                     try {
                         buildTaskFrom(userInputInfo, ui);
                     } catch (NoDescriptionException | NoCommandException e ) {
-                        ui.println(e.getMessage());
+                        ui.speak(e.getMessage());
                     }
                 }
             }
             userInputInfo = ui.readline();
         }
+        */
     }
 
+    /*
     private static void endConvo(Ui ui) {
         StringBuilder saveData = new StringBuilder();
 
@@ -65,7 +78,7 @@ public class Lux {
         try {
             SaveFileManager.updateSaveFile(saveData.toString());
         } catch (IOException e) {
-            ui.println("Did not manage to save task data"  + e.getMessage());
+            ui.speak("Did not manage to save task data"  + e.getMessage());
         }
 
         ui.endConvo();
@@ -81,7 +94,7 @@ public class Lux {
                 throw new NoDescriptionException("bruh, task name cannot be empty la");
             }
             Task itemToAdd = new ToDo(toDoMatcher.group(2));
-            TaskList.addListItem(itemToAdd, ui);
+            tasklist.addListItem(itemToAdd, ui);
         } else if (deadlineMatcher.find()) {
             if (deadlineMatcher.group(2).isBlank()) {
                 throw new NoDescriptionException("bruh, task name cannot be empty la");
@@ -105,7 +118,7 @@ public class Lux {
             throw new NoCommandException("bruh, idk what this mean. If you are using a valid command, make sure to have the necessary descriptions.");
         }
 
-    }
+    }*/
 
     private static void loadTask() throws IOException {
         SaveFileManager.getOrCreateSaveFile();

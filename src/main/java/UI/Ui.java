@@ -13,7 +13,7 @@ public class Ui {
         return this.userInput.nextLine();
     }
 
-    public void println(String s){
+    public void speak(String s){
         System.out.println(s + "\n");
     }
 
