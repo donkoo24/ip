@@ -65,7 +65,8 @@ public class SaveFileManager {
                     }
 
                 } else if (line.startsWith("[E]")) {
-                    Pattern pattern = Pattern.compile("\\[(.)\\]\\[(.)\\]\\s(.*)\\s\\(from:\\s(.*)\\sto:\\s(.*)\\)");
+                    Pattern pattern = Pattern.compile(
+                            "\\[(.)\\]\\[(.)\\]\\s(.*)\\s\\(from:\\s(.*)\\sto:\\s(.*)\\)");
                     Matcher matcher = pattern.matcher(line);
                     if (matcher.matches()) {
                         String taskName = matcher.group(3);
@@ -86,6 +87,11 @@ public class SaveFileManager {
             System.out.println(e.getMessage());
         }
 
+    }
+
+    public static void loadTask(TaskList taskList) throws IOException {
+        SaveFileManager.getOrCreateSaveFile();
+        SaveFileManager.loadData(taskList.getList());
     }
 
 }
