@@ -1,4 +1,4 @@
-package UI;
+package lux.ui;
 
 import java.util.Scanner;
 

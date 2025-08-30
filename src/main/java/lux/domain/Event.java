@@ -1,4 +1,7 @@
-import java.time.LocalDate;
+package lux.domain;
+
+import lux.parser.DateParser;
+import lux.parser.ParsedDate;
 
 public class Event extends Task {
     private ParsedDate start;
