@@ -1,3 +1,8 @@
+package lux.domain;
+
+import lux.parser.DateParser;
+import lux.parser.ParsedDate;
+
 import java.time.format.DateTimeFormatter;
 
 public class Deadline extends Task {
