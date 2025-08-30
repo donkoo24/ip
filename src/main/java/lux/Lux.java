@@ -1,3 +1,5 @@
+package lux;
+
 import lux.parser.Command;
 import lux.parser.CommandParser;
 import lux.repo.TaskList;

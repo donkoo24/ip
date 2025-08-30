@@ -1,4 +1,4 @@
-# Lux User Guide
+# lux.Lux User Guide
 
 // Update the title above to match the actual product name
 
