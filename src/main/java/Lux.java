@@ -26,16 +26,12 @@ public class Lux {
         endConvo(ui);
     }
 
-    /*private static void greet() {
-        System.out.println("Hello! I'm Lux\nWhat can I do for you?\n");
-    }*/
-
     private static void handleConvo(Ui ui) {
         String userInputInfo = ui.readline();
 
         while (!userInputInfo.equalsIgnoreCase("bye")) {
             if (userInputInfo.equalsIgnoreCase("list")) {
-                showList();
+                showList(ui);
             } else {
                 Matcher markMatcher = MARK_PATTERN.matcher(userInputInfo);
                 Matcher unmarkMatcher = UNMARK_PATTERN.matcher(userInputInfo);
@@ -50,7 +46,7 @@ public class Lux {
 
                 else {
                     try {
-                        addListItem(userInputInfo);
+                        addListItem(userInputInfo, ui);
                     } catch (NoDescriptionException e) {
                         ui.println(e.getMessage());
                     } catch (NoCommandException e) {
@@ -72,13 +68,13 @@ public class Lux {
         try {
             SaveFileManager.updateSaveFile(saveData.toString());
         } catch (IOException e) {
-            System.out.println("Did not manage to save task data"  + e.getMessage());
+            ui.println("Did not manage to save task data"  + e.getMessage());
         }
 
         ui.endConvo();
     }
 
-    private static void addListItem(String item) throws NoDescriptionException, NoCommandException {
+    private static void addListItem(String item, Ui ui) throws NoDescriptionException, NoCommandException {
         Matcher toDoMatcher = TODO_PATTERN.matcher(item);
         Matcher deadlineMatcher = DEADLINE_PATTERN.matcher(item);
         Matcher eventMatcher = EVENT_PATTERN.matcher(item);
@@ -89,7 +85,7 @@ public class Lux {
             }
             Task itemToAdd = new ToDo(toDoMatcher.group(2));
             userList.add(itemToAdd);
-            System.out.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list" + "\n");
+            ui.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list" + "\n");
         } else if (deadlineMatcher.find()) {
             if (deadlineMatcher.group(2).isBlank()) {
                 throw new NoDescriptionException("bruh, task name cannot be empty la");
@@ -99,7 +95,7 @@ public class Lux {
 
             Task itemToAdd = new Deadline(deadlineMatcher.group(2), deadlineMatcher.group(3));
             userList.add(itemToAdd);
-            System.out.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
+            ui.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
         } else if (eventMatcher.find()) {
             if (eventMatcher.group(2).isBlank()) {
                 throw new NoDescriptionException("bruh, task name cannot be empty la");
@@ -110,50 +106,50 @@ public class Lux {
             }
             Task itemToAdd = new Event(eventMatcher.group(2), eventMatcher.group(3), eventMatcher.group(4));
             userList.add(itemToAdd);
-            System.out.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
+            ui.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
         } else {
             throw new NoCommandException("bruh, idk what this mean. If you are using a valid command, make sure to have the necessary descriptions.");
         }
 
     }
 
-    private static void showList() {
-        System.out.println("Here are the tasks in your list");
+    private static void showList(Ui ui) {
+        ui.println("Here are the tasks in your list");
         for (int i = 0; i < userList.size(); i++) {
             System.out.printf("%d. %s\n", i + 1, userList.get(i));
         }
-        System.out.println();
+        ui.println();
     }
 
-    private static void markTask(int taskNumber) {
+    private static void markTask(int taskNumber, Ui ui) {
         if (taskNumber > userList.size() || taskNumber <= 0) {
             return;
         } else {
             Task actionTask = userList.get(taskNumber - 1);
             actionTask.markCompleted();
-            System.out.println("Nice! I've marked this task as done:\n" + actionTask.toString() + "\n");
+            ui.println("Nice! I've marked this task as done:\n" + actionTask.toString() + "\n");
         }
     }
 
-    private static void unmarkTask(int taskNumber) {
+    private static void unmarkTask(int taskNumber, Ui ui) {
         if (taskNumber > userList.size() || taskNumber <= 0) {
             return;
         } else {
             Task actionTask = userList.get(taskNumber - 1);
             actionTask.unmarkCompleted();
-            System.out.println("Ok, I've marked this task as not done yet:\n" +  actionTask.toString() + "\n");
+            ui.println("Ok, I've marked this task as not done yet:\n" +  actionTask.toString() + "\n");
         }
 
     }
 
-    private static void deleteTask(int taskNumber) {
+    private static void deleteTask(int taskNumber, Ui ui) {
         if (taskNumber > userList.size() || taskNumber <= 0) {
             return;
         } else {
             Task removedTask = userList.get(taskNumber - 1);
             userList.remove(taskNumber - 1);
             Task.reduceTaskCount();
-            System.out.println("Noted, I've removed this task:\n" + removedTask.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
+            ui.println("Noted, I've removed this task:\n" + removedTask.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
         }
     }
 
