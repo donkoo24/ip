@@ -21,6 +21,8 @@ public class DateParser {
 
             }
         }
-        throw new IllegalArgumentException("This date format is not supported: " + date + "\nPlease use dd/mm/yyyy, yyyy-mm-dd, or MMM dd yyyy");
+        throw new IllegalArgumentException("This date format is not supported: "
+                + date
+                + "\nPlease use dd/mm/yyyy, yyyy-mm-dd, or MMM dd yyyy");
     }
 }
