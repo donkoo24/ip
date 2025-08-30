@@ -1,7 +1,6 @@
 import UI.Ui;
 
 import java.io.IOException;
-import java.util.Scanner;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -9,7 +8,7 @@ import java.util.regex.Matcher;
 
 
 public class Lux {
-    private static List<Task> userList = new ArrayList<>();
+    private static TaskList taskList = new TaskList();
     private final static Pattern MARK_PATTERN = Pattern.compile("(^mark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
     private final static Pattern UNMARK_PATTERN = Pattern.compile("^(unmark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
     private final static Pattern TODO_PATTERN = Pattern.compile("(todo)\\s(.*)", Pattern.CASE_INSENSITIVE);
@@ -31,25 +30,23 @@ public class Lux {
 
         while (!userInputInfo.equalsIgnoreCase("bye")) {
             if (userInputInfo.equalsIgnoreCase("list")) {
-                showList(ui);
+                taskList.showList(ui);
             } else {
                 Matcher markMatcher = MARK_PATTERN.matcher(userInputInfo);
                 Matcher unmarkMatcher = UNMARK_PATTERN.matcher(userInputInfo);
                 Matcher deleteMatcher = DELETE_PATTERN.matcher(userInputInfo);
                 if (markMatcher.find()) {
-                    markTask(Integer.parseInt(markMatcher.group(2)), ui);
+                    taskList.markTask(Integer.parseInt(markMatcher.group(2)), ui);
                 } else if (unmarkMatcher.find()) {
-                    unmarkTask(Integer.parseInt(unmarkMatcher.group(2)), ui);
+                    taskList.unmarkTask(Integer.parseInt(unmarkMatcher.group(2)), ui);
                 } else if (deleteMatcher.find()) {
-                    deleteTask(Integer.parseInt(deleteMatcher.group(2)), ui);
+                    taskList.deleteTask(Integer.parseInt(deleteMatcher.group(2)), ui);
                 }
 
                 else {
                     try {
-                        addListItem(userInputInfo, ui);
-                    } catch (NoDescriptionException e) {
-                        ui.println(e.getMessage());
-                    } catch (NoCommandException e) {
+                        buildTaskFrom(userInputInfo, ui);
+                    } catch (NoDescriptionException | NoCommandException e ) {
                         ui.println(e.getMessage());
                     }
                 }
@@ -61,8 +58,8 @@ public class Lux {
     private static void endConvo(Ui ui) {
         StringBuilder saveData = new StringBuilder();
 
-        for (int i = 0; i < userList.size(); i++) {
-            saveData.append(userList.get(i)).append(System.lineSeparator());
+        for (int i = 0; i < taskList.getSize(); i++) {
+            saveData.append(taskList.getTask(i)).append(System.lineSeparator());
         }
 
         try {
@@ -74,7 +71,7 @@ public class Lux {
         ui.endConvo();
     }
 
-    private static void addListItem(String item, Ui ui) throws NoDescriptionException, NoCommandException {
+    private static void buildTaskFrom(String item, Ui ui) throws NoDescriptionException, NoCommandException {
         Matcher toDoMatcher = TODO_PATTERN.matcher(item);
         Matcher deadlineMatcher = DEADLINE_PATTERN.matcher(item);
         Matcher eventMatcher = EVENT_PATTERN.matcher(item);
@@ -84,8 +81,7 @@ public class Lux {
                 throw new NoDescriptionException("bruh, task name cannot be empty la");
             }
             Task itemToAdd = new ToDo(toDoMatcher.group(2));
-            userList.add(itemToAdd);
-            ui.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list" + "\n");
+            TaskList.addListItem(itemToAdd, ui);
         } else if (deadlineMatcher.find()) {
             if (deadlineMatcher.group(2).isBlank()) {
                 throw new NoDescriptionException("bruh, task name cannot be empty la");
@@ -94,8 +90,7 @@ public class Lux {
             }
 
             Task itemToAdd = new Deadline(deadlineMatcher.group(2), deadlineMatcher.group(3));
-            userList.add(itemToAdd);
-            ui.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
+            TaskList.addListItem(itemToAdd, ui);
         } else if (eventMatcher.find()) {
             if (eventMatcher.group(2).isBlank()) {
                 throw new NoDescriptionException("bruh, task name cannot be empty la");
@@ -105,56 +100,15 @@ public class Lux {
                 throw new NoDescriptionException("bruh, end field cannot be empty la, if not go use deadline or todo");
             }
             Task itemToAdd = new Event(eventMatcher.group(2), eventMatcher.group(3), eventMatcher.group(4));
-            userList.add(itemToAdd);
-            ui.println("Got it. I've added this task:\n" + itemToAdd.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
+            TaskList.addListItem(itemToAdd, ui);
         } else {
             throw new NoCommandException("bruh, idk what this mean. If you are using a valid command, make sure to have the necessary descriptions.");
         }
 
     }
 
-    private static void showList(Ui ui) {
-        ui.println("Here are the tasks in your list");
-        for (int i = 0; i < userList.size(); i++) {
-            System.out.printf("%d. %s\n", i + 1, userList.get(i));
-        }
-        ui.println("");
-    }
-
-    private static void markTask(int taskNumber, Ui ui) {
-        if (taskNumber > userList.size() || taskNumber <= 0) {
-            return;
-        } else {
-            Task actionTask = userList.get(taskNumber - 1);
-            actionTask.markCompleted();
-            ui.println("Nice! I've marked this task as done:\n" + actionTask.toString() + "\n");
-        }
-    }
-
-    private static void unmarkTask(int taskNumber, Ui ui) {
-        if (taskNumber > userList.size() || taskNumber <= 0) {
-            return;
-        } else {
-            Task actionTask = userList.get(taskNumber - 1);
-            actionTask.unmarkCompleted();
-            ui.println("Ok, I've marked this task as not done yet:\n" +  actionTask.toString() + "\n");
-        }
-
-    }
-
-    private static void deleteTask(int taskNumber, Ui ui) {
-        if (taskNumber > userList.size() || taskNumber <= 0) {
-            return;
-        } else {
-            Task removedTask = userList.get(taskNumber - 1);
-            userList.remove(taskNumber - 1);
-            Task.reduceTaskCount();
-            ui.println("Noted, I've removed this task:\n" + removedTask.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
-        }
-    }
-
     private static void loadTask() throws IOException {
         SaveFileManager.getOrCreateSaveFile();
-        SaveFileManager.loadData(userList);
+        SaveFileManager.loadData(taskList.getList());
     }
 }
