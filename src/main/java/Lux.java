@@ -37,11 +37,11 @@ public class Lux {
                 Matcher unmarkMatcher = UNMARK_PATTERN.matcher(userInputInfo);
                 Matcher deleteMatcher = DELETE_PATTERN.matcher(userInputInfo);
                 if (markMatcher.find()) {
-                    markTask(Integer.parseInt(markMatcher.group(2)));
+                    markTask(Integer.parseInt(markMatcher.group(2)), ui);
                 } else if (unmarkMatcher.find()) {
-                    unmarkTask(Integer.parseInt(unmarkMatcher.group(2)));
+                    unmarkTask(Integer.parseInt(unmarkMatcher.group(2)), ui);
                 } else if (deleteMatcher.find()) {
-                    deleteTask(Integer.parseInt(deleteMatcher.group(2)));
+                    deleteTask(Integer.parseInt(deleteMatcher.group(2)), ui);
                 }
 
                 else {
@@ -118,7 +118,7 @@ public class Lux {
         for (int i = 0; i < userList.size(); i++) {
             System.out.printf("%d. %s\n", i + 1, userList.get(i));
         }
-        ui.println();
+        ui.println("");
     }
 
     private static void markTask(int taskNumber, Ui ui) {
