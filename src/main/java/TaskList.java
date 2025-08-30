@@ -10,7 +10,13 @@ public class TaskList {
 
     public void addListItem(Task t, Ui ui) {
         taskList.add(t);
-        ui.speak("Got it. I've added this task:\n" + t.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list" + "\n");
+        ui.speak("Got it. I've added this task:\n"
+                + t.toString()
+                + "\n"
+                + "Now you have "
+                + Task.getNumberOfTasks()
+                + " task in the list"
+                + "\n");
     }
 
     public int getSize() {
@@ -60,7 +66,12 @@ public class TaskList {
             Task removedTask = taskList.get(taskNumber - 1);
             taskList.remove(taskNumber - 1);
             Task.reduceTaskCount();
-            ui.speak("Noted, I've removed this task:\n" + removedTask.toString() + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list"+ "\n");
+            ui.speak("Noted, I've removed this task:\n"
+                    + removedTask.toString()
+                    + "\n"
+                    + "Now you have "
+                    + Task.getNumberOfTasks()
+                    + " task in the list"+ "\n");
         }
     }
 

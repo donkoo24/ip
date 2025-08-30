@@ -6,10 +6,13 @@ import java.util.regex.Pattern;
 
 public class CommandParser {
     private final static Pattern MARK_PATTERN = Pattern.compile("(^mark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern UNMARK_PATTERN = Pattern.compile("^(unmark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern UNMARK_PATTERN = Pattern.compile(
+            "^(unmark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
     private final static Pattern TODO_PATTERN = Pattern.compile("(todo)\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern DEADLINE_PATTERN = Pattern.compile("(deadline)\\s(.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern EVENT_PATTERN = Pattern.compile("(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern DEADLINE_PATTERN = Pattern.compile(
+            "(deadline)\\s(.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern EVENT_PATTERN = Pattern.compile(
+            "(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
     private final static Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
 
     public CommandParser() {}
@@ -78,9 +81,11 @@ public class CommandParser {
                     if (eventMatcher.group(2).isBlank()) {
                         throw new NoDescriptionException("bruh, task name cannot be empty la");
                     } else if (eventMatcher.group(3).isBlank()) {
-                        throw new NoDescriptionException("bruh, start field cannot be empty la, if not go use todo");
+                        throw new NoDescriptionException(
+                                "bruh, start field cannot be empty la, if not go use todo");
                     } else if (eventMatcher.group(4).isBlank()) {
-                        throw new NoDescriptionException("bruh, end field cannot be empty la, if not go use deadline or todo");
+                        throw new NoDescriptionException(
+                                "bruh, end field cannot be empty la, if not go use deadline or todo");
                     }
                     Task itemToAdd = new Event(eventMatcher.group(2), eventMatcher.group(3), eventMatcher.group(4));
                     tasks.addListItem(itemToAdd, ui);
