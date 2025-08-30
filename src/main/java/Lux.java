@@ -1,3 +1,5 @@
+import UI.Ui;
+
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.List;
@@ -16,21 +18,20 @@ public class Lux {
     private final static Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
 
     public static void main(String[] args) throws IOException {
-        greet();
+        Ui ui = new Ui();
+
+        ui.greet();
         loadTask();
-        handleConvo();
-        endConvo();
+        handleConvo(ui);
+        endConvo(ui);
     }
 
-    private static void greet() {
+    /*private static void greet() {
         System.out.println("Hello! I'm Lux\nWhat can I do for you?\n");
-    }
+    }*/
 
-    private static void handleConvo() {
-        Scanner userInput = new Scanner(System.in);
-        String userInputInfo = userInput.nextLine();
-
-
+    private static void handleConvo(Ui ui) {
+        String userInputInfo = ui.readline();
 
         while (!userInputInfo.equalsIgnoreCase("bye")) {
             if (userInputInfo.equalsIgnoreCase("list")) {
@@ -51,17 +52,17 @@ public class Lux {
                     try {
                         addListItem(userInputInfo);
                     } catch (NoDescriptionException e) {
-                        System.out.println(e.getMessage());
+                        ui.println(e.getMessage());
                     } catch (NoCommandException e) {
-                        System.out.println(e.getMessage());
+                        ui.println(e.getMessage());
                     }
                 }
             }
-            userInputInfo = userInput.nextLine();
+            userInputInfo = ui.readline();
         }
     }
 
-    private static void endConvo() {
+    private static void endConvo(Ui ui) {
         StringBuilder saveData = new StringBuilder();
 
         for (int i = 0; i < userList.size(); i++) {
@@ -74,7 +75,7 @@ public class Lux {
             System.out.println("Did not manage to save task data"  + e.getMessage());
         }
 
-        System.out.println("Bye. Hope to see you again soon!");
+        ui.endConvo();
     }
 
     private static void addListItem(String item) throws NoDescriptionException, NoCommandException {
