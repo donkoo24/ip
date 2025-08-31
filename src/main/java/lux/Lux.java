@@ -10,6 +10,9 @@ import lux.util.NoDescriptionException;
 
 import java.io.IOException;
 
+/**
+ * Starting point for Lux chatbot.
+ */
 public class Lux {
     private TaskList taskList = new TaskList();
     private CommandParser cp;
@@ -20,11 +23,23 @@ public class Lux {
         this.ui = new Ui();
     }
 
+    /**
+     * Starts the application by greeting the user, loading save file, and then handles commands.
+     *
+     * @throws IOException if loading save file fails
+     */
+
     public void run() throws IOException {
         ui.greet();
         SaveFileManager.loadTask(this.taskList);
         handleConvo(ui, cp);
     }
+
+    /**
+     * Program entry point.
+     *
+     * @param args CLI argument that is not used.
+     */
 
     public static void main(String[] args) {
         try {

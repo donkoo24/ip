@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Logic unit for recognising and handling command that is called by user.
+ * This class uses regex to help with pattern recognition.
+ */
 public class CommandParser {
     private final static Pattern MARK_PATTERN = Pattern.compile("(^mark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
     private final static Pattern UNMARK_PATTERN = Pattern.compile(
@@ -26,13 +30,22 @@ public class CommandParser {
             "(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
     private final static Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
 
+    /**
+     * Constructs a CommandParser.
+     */
     public CommandParser() {}
 
+    /**
+     * Parses a raw command input line into a Command. Validation of command arguments happen within the Command.
+     *
+     * @param command The raw input command from user to instruct Lux what to do.
+     * @return a Command representing what the user wants to do, executing it applies the effects.
+     */
     public Command parse(String command) {
         if (command.equalsIgnoreCase("bye")) {
             return new Command() {
                 @Override
-                public void execute(TaskList tasks, Ui ui) throws NoDescriptionException, NoCommandException {
+                public void execute(TaskList tasks, Ui ui) {
                     StringBuilder saveData = new StringBuilder();
 
                     for (int i = 0; i < tasks.getSize(); i++) {
