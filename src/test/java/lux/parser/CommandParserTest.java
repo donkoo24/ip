@@ -21,7 +21,7 @@ public class CommandParserTest {
 
     static class StubUi extends Ui {
         final List<String> results = new ArrayList<>();
-        boolean ended = false;
+        private boolean ended = false;
 
         public StubUi() {
             super();
@@ -36,13 +36,13 @@ public class CommandParserTest {
     }
 
     static class StubTaskList extends TaskList {
-        int listCalls = 0;
-        int addCalls = 0;
-        int markCalls = 0;
-        int unmarkCalls = 0;
-        int deleteCalls = 0;
-        int lastIndex = -1;
-        Task lastAdded = null;
+        private int listCalls = 0;
+        private int addCalls = 0;
+        private int markCalls = 0;
+        private int unmarkCalls = 0;
+        private int deleteCalls = 0;
+        private int lastIndex = -1;
+        private Task lastAdded = null;
 
         public StubTaskList() {
             super();
@@ -52,16 +52,20 @@ public class CommandParserTest {
             listCalls++;
         }
         @Override public void addListItem(Task itemToAdd, Ui ui) {
-            addCalls++; lastAdded = itemToAdd;
+            addCalls++;
+            lastAdded = itemToAdd;
         }
         @Override public void markTask(int taskNumber, Ui ui) {
-            markCalls++; lastIndex = taskNumber;
+            markCalls++;
+            lastIndex = taskNumber;
         }
         @Override public void unmarkTask(int taskNumber, Ui ui) {
-            unmarkCalls++; lastIndex = taskNumber;
+            unmarkCalls++;
+            lastIndex = taskNumber;
         }
         @Override public void deleteTask(int taskNumber, Ui ui) {
-            deleteCalls++; lastIndex = taskNumber;
+            deleteCalls++;
+            lastIndex = taskNumber;
         }
     }
 

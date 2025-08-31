@@ -16,7 +16,7 @@ public class ParsedDate {
      * @param date The date.
      * @param format The date format the date was written with.
      */
-    public ParsedDate (LocalDate date, DateTimeFormatter format) {
+    public ParsedDate(LocalDate date, DateTimeFormatter format) {
         this.date = date;
         this.dateFormat = format;
     }

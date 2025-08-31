@@ -35,7 +35,7 @@ public class TaskList {
         return taskList;
     }
 
-    public void showList (Ui ui) {
+    public void showList(Ui ui) {
         ui.speak("Here are the tasks in your list");
         for (int i = 0; i < taskList.size(); i++) {
             String message = String.format("%d. %s", i + 1, taskList.get(i));
@@ -44,7 +44,7 @@ public class TaskList {
         System.out.print("\n");
     }
 
-    public void markTask (int taskNumber, Ui ui) {
+    public void markTask(int taskNumber, Ui ui) {
         if (taskNumber > taskList.size() || taskNumber <= 0) {
             return;
         } else {
@@ -54,13 +54,13 @@ public class TaskList {
         }
     }
 
-    public void unmarkTask (int taskNumber, Ui ui) {
+    public void unmarkTask(int taskNumber, Ui ui) {
         if (taskNumber > taskList.size() || taskNumber <= 0) {
             return;
         } else {
             Task actionTask = taskList.get(taskNumber - 1);
             actionTask.unmarkCompleted();
-            ui.speak("Ok, I've marked this task as not done yet:\n" +  actionTask.toString() + "\n");
+            ui.speak("Ok, I've marked this task as not done yet:\n" + actionTask.toString() + "\n");
         }
     }
 
@@ -76,7 +76,8 @@ public class TaskList {
                     + "\n"
                     + "Now you have "
                     + Task.getNumberOfTasks()
-                    + " task in the list"+ "\n");
+                    + " task in the list"
+                    + "\n");
         }
     }
 

@@ -25,7 +25,7 @@ public class Event extends Task {
      * @param start The start string to parse.
      * @param end The end string to parse.
      */
-    public Event (String taskName, String start, String end) {
+    public Event(String taskName, String start, String end) {
         super(taskName);
         this.start = DateParser.parseDate(start);
         this.end = DateParser.parseDate(end);

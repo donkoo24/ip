@@ -10,7 +10,7 @@ import java.util.List;
  * A logic unit to recognising and handling different date formats.
  */
 public class DateParser {
-    private static List<DateTimeFormatter> SUPPORTED_FORMATS = new ArrayList<>(List.of(
+    private static final List<DateTimeFormatter> SUPPORTED_FORMATS = new ArrayList<>(List.of(
             DateTimeFormatter.ofPattern("d/MM/yyyy"),
             DateTimeFormatter.ISO_LOCAL_DATE,
             DateTimeFormatter.ofPattern("MMM d yyyy")
@@ -32,6 +32,7 @@ public class DateParser {
             try {
                 return new ParsedDate(LocalDate.parse(date, formatter), formatter);
             } catch (DateTimeParseException ignored) {
+                System.out.println(ignored.getMessage());
             }
         }
         throw new IllegalArgumentException("This date format is not supported: "

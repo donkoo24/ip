@@ -8,27 +8,27 @@ import lux.domain.Deadline;
 import lux.domain.Event;
 import lux.domain.Task;
 import lux.domain.ToDo;
-import lux.ui.Ui;
 import lux.repo.TaskList;
+import lux.storage.SaveFileManager;
+import lux.ui.Ui;
 import lux.util.NoCommandException;
 import lux.util.NoDescriptionException;
-import lux.storage.SaveFileManager;
 
 /**
  * Logic unit for recognising and handling command that is called by user.
  * This class uses regex to help with pattern recognition.
  */
 public class CommandParser {
-    private final static Pattern MARK_PATTERN = Pattern.compile("(^mark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern UNMARK_PATTERN = Pattern.compile(
+    private static final Pattern MARK_PATTERN = Pattern.compile("(^mark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern UNMARK_PATTERN = Pattern.compile(
             "^(unmark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern TODO_PATTERN = Pattern.compile("(todo)\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern DEADLINE_PATTERN = Pattern.compile(
+    private static final Pattern TODO_PATTERN = Pattern.compile("(todo)\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DEADLINE_PATTERN = Pattern.compile(
             "(deadline)\\s(.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern EVENT_PATTERN = Pattern.compile(
+    private static final Pattern EVENT_PATTERN = Pattern.compile(
             "(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private final static Pattern FIND_PATTERN = Pattern.compile("(^find)\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern FIND_PATTERN = Pattern.compile("(^find)\\s(.*)", Pattern.CASE_INSENSITIVE);
 
     /**
      * Constructs a CommandParser.
@@ -55,13 +55,15 @@ public class CommandParser {
                     try {
                         SaveFileManager.updateSaveFile(saveData.toString());
                     } catch (IOException e) {
-                        ui.speak("Did not manage to save task data"  + e.getMessage());
+                        ui.speak("Did not manage to save task data" + e.getMessage());
                     }
 
                     ui.endConvo();
                 }
                 @Override
-                public boolean isExit() { return true; }
+                public boolean isExit() {
+                    return true;
+                }
             };
         } else if (command.equalsIgnoreCase("list")) {
             return (tasks, ui) -> tasks.showList(ui);
@@ -79,7 +81,7 @@ public class CommandParser {
             } else if (unmarkMatcher.find()) {
                 return (tasks, ui) -> tasks.unmarkTask(Integer.parseInt(unmarkMatcher.group(2)), ui);
             } else if (deleteMatcher.find()) {
-                return (tasks, ui) ->  tasks.deleteTask(Integer.parseInt(deleteMatcher.group(2)), ui);
+                return (tasks, ui) -> tasks.deleteTask(Integer.parseInt(deleteMatcher.group(2)), ui);
             } else if (toDoMatcher.find()) {
                 return (tasks, ui) -> {
                     if (toDoMatcher.group(2).isBlank()) {
