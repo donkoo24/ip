@@ -1,5 +1,9 @@
 package lux.parser;
 
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import lux.domain.Deadline;
 import lux.domain.Event;
 import lux.domain.Task;
@@ -9,11 +13,6 @@ import lux.repo.TaskList;
 import lux.util.NoCommandException;
 import lux.util.NoDescriptionException;
 import lux.storage.SaveFileManager;
-
-
-import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Logic unit for recognising and handling command that is called by user.
@@ -60,10 +59,8 @@ public class CommandParser {
 
                     ui.endConvo();
                 }
-
                 @Override
                 public boolean isExit() { return true; }
-
             };
         } else if (command.equalsIgnoreCase("list")) {
             return (tasks, ui) -> tasks.showList(ui);
@@ -96,7 +93,6 @@ public class CommandParser {
                     } else if (deadlineMatcher.group(3).isBlank()) {
                         throw new NoDescriptionException("bruh, deadline cannot be empty la, if not go use todo");
                     }
-
                     Task itemToAdd = new Deadline(deadlineMatcher.group(2), deadlineMatcher.group(3));
                     tasks.addListItem(itemToAdd, ui);
                 };
@@ -120,8 +116,6 @@ public class CommandParser {
                             + " make sure to have the necessary descriptions.");
                 };
             }
-
         }
     }
-
 }

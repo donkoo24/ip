@@ -1,20 +1,20 @@
 package lux.storage;
 
+import java.io.IOException;
+import java.io.FileWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.ArrayList;
+import java.util.List;
+
 import lux.domain.Deadline;
 import lux.domain.Event;
 import lux.domain.Task;
 import lux.domain.ToDo;
 import lux.repo.TaskList;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.io.FileWriter;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SaveFileManager {
     private static final Path PATH_SAVEFILEDIRECTORY = Paths.get("./data/");
@@ -49,6 +49,7 @@ public class SaveFileManager {
                     if (matcher.matches()) {
                         String taskName = matcher.group(3);
                         String taskMark = matcher.group(2);
+
                         ToDo itemToAdd = new ToDo(taskName);
 
                         if (taskMark.equals("X")) {
@@ -56,14 +57,15 @@ public class SaveFileManager {
                         }
                         taskList.add(itemToAdd);
                     }
-
                 } else if (line.startsWith("[D]")) {
                     Pattern pattern = Pattern.compile("\\[(.)\\]\\[(.)\\]\\s(.*)\\s\\(by:\\s(.*)\\)");
                     Matcher matcher = pattern.matcher(line);
+
                     if (matcher.matches()) {
                         String taskName = matcher.group(3);
                         String taskMark = matcher.group(2);
                         String taskDeadline = matcher.group(4);
+
                         Deadline itemToAdd = new Deadline(taskName, taskDeadline);
 
                         if (taskMark.equals("X")) {
@@ -71,7 +73,6 @@ public class SaveFileManager {
                         }
                         taskList.add(itemToAdd);
                     }
-
                 } else if (line.startsWith("[E]")) {
                     Pattern pattern = Pattern.compile(
                             "\\[(.)\\]\\[(.)\\]\\s(.*)\\s\\(from:\\s(.*)\\sto:\\s(.*)\\)");
@@ -81,6 +82,7 @@ public class SaveFileManager {
                         String taskMark = matcher.group(2);
                         String taskFrom = matcher.group(4);
                         String taskTo = matcher.group(5);
+
                         Event itemToAdd = new Event(taskName, taskFrom, taskTo);
 
                         if (taskMark.equals("X")) {
@@ -88,18 +90,15 @@ public class SaveFileManager {
                         }
                         taskList.add(itemToAdd);
                     }
-
                 }
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     public static void loadTask(TaskList taskList) throws IOException {
         SaveFileManager.getOrCreateSaveFile();
         SaveFileManager.loadData(taskList.getList());
     }
-
 }

@@ -32,7 +32,6 @@ public class DateParser {
             try {
                 return new ParsedDate(LocalDate.parse(date, formatter), formatter);
             } catch (DateTimeParseException ignored) {
-
             }
         }
         throw new IllegalArgumentException("This date format is not supported: "

@@ -5,9 +5,9 @@ package lux.domain;
  * It has a global static counter to keep track of total number of tasks.
  */
 public class Task {
+    private static int numberOfTasks = 0;
     private String taskName;
     private boolean isCompleted;
-    private static int numberOfTasks = 0;
 
     /**
      * Constructs a Task with description,
