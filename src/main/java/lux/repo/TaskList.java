@@ -1,10 +1,10 @@
 package lux.repo;
 
-import lux.domain.Task;
-import lux.ui.Ui;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import lux.domain.Task;
+import lux.ui.Ui;
 
 public class TaskList {
     private static List<Task> taskList = new ArrayList<>();
@@ -77,5 +77,4 @@ public class TaskList {
                     + " task in the list"+ "\n");
         }
     }
-
 }
