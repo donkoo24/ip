@@ -28,6 +28,7 @@ public class CommandParser {
     private final static Pattern EVENT_PATTERN = Pattern.compile(
             "(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
     private final static Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private final static Pattern FIND_PATTERN = Pattern.compile("(^find)\\s(.*)", Pattern.CASE_INSENSITIVE);
 
     /**
      * Constructs a CommandParser.
@@ -71,6 +72,7 @@ public class CommandParser {
             Matcher toDoMatcher = TODO_PATTERN.matcher(command);
             Matcher deadlineMatcher = DEADLINE_PATTERN.matcher(command);
             Matcher eventMatcher = EVENT_PATTERN.matcher(command);
+            Matcher findMatcher = FIND_PATTERN.matcher(command);
 
             if (markMatcher.find()) {
                 return (tasks, ui) -> tasks.markTask(Integer.parseInt(markMatcher.group(2)), ui);
@@ -109,6 +111,13 @@ public class CommandParser {
                     }
                     Task itemToAdd = new Event(eventMatcher.group(2), eventMatcher.group(3), eventMatcher.group(4));
                     tasks.addListItem(itemToAdd, ui);
+                };
+            } else if (findMatcher.find()) {
+                return (tasks, ui) -> {
+                    if (findMatcher.group(2).isBlank()) {
+                        throw new NoDescriptionException("please indicate what you are searching for");
+                    }
+                    tasks.findTask(findMatcher.group(2), ui);
                 };
             } else {
                 return (tasks, ui) -> {
