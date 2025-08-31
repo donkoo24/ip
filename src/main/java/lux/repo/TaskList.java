@@ -2,6 +2,7 @@ package lux.repo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import lux.domain.Task;
 import lux.ui.Ui;
@@ -37,9 +38,10 @@ public class TaskList {
     public void showList (Ui ui) {
         ui.speak("Here are the tasks in your list");
         for (int i = 0; i < taskList.size(); i++) {
-            System.out.printf("%d. %s\n", i + 1, taskList.get(i));
+            String message = String.format("%d. %s", i + 1, taskList.get(i));
+            System.out.println(message);
         }
-        ui.speak("");
+        System.out.print("\n");
     }
 
     public void markTask (int taskNumber, Ui ui) {
@@ -76,5 +78,17 @@ public class TaskList {
                     + Task.getNumberOfTasks()
                     + " task in the list"+ "\n");
         }
+    }
+
+    public void findTask(String taskName, Ui ui) {
+        Stream<Task> temp = taskList.stream();
+        List<Task> possibleTasks = temp.filter(x -> x.getTaskName().toLowerCase().contains(taskName)).toList();
+
+        ui.speak("Here are the matching tasks in your list:");
+        for (int i = 0; i < possibleTasks.size(); i++) {
+            String message = String.format("%d. %s", i + 1, possibleTasks.get(i));
+            System.out.println(message);
+        }
+        System.out.print("\n");
     }
 }

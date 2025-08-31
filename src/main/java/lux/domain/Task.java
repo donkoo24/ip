@@ -52,6 +52,13 @@ public class Task {
     }
 
     /**
+     * Returns task description
+     */
+    public String getTaskName() {
+        return this.taskName;
+    }
+
+    /**
      * Returns the display form of the task, indicating the task description, completion status.
      *
      * @return String in the format: [X] description.
