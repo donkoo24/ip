@@ -18,6 +18,9 @@ public class Lux {
     private CommandParser cp;
     private Ui ui;
 
+    /**
+     * Constructs the Lux chatbot and initalises the Ui and CommandParser for use.
+     */
     public Lux() {
         this.cp = new CommandParser();
         this.ui = new Ui();
