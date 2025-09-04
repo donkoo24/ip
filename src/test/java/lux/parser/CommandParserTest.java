@@ -30,8 +30,9 @@ public class CommandParserTest {
         @Override public void speak(String s) {
             results.add(s);
         }
-        @Override public void endConvo() {
+        @Override public String endConvo() {
             ended = true;
+            return "";
         }
     }
 
@@ -48,24 +49,29 @@ public class CommandParserTest {
             super();
         }
 
-        @Override public void showList(Ui ui) {
+        @Override public String showList(Ui ui) {
             listCalls++;
+            return "";
         }
-        @Override public void addListItem(Task itemToAdd, Ui ui) {
+        @Override public String addListItem(Task itemToAdd, Ui ui) {
             addCalls++;
             lastAdded = itemToAdd;
+            return "";
         }
-        @Override public void markTask(int taskNumber, Ui ui) {
+        @Override public String markTask(int taskNumber, Ui ui) {
             markCalls++;
             lastIndex = taskNumber;
+            return "";
         }
-        @Override public void unmarkTask(int taskNumber, Ui ui) {
+        @Override public String unmarkTask(int taskNumber, Ui ui) {
             unmarkCalls++;
             lastIndex = taskNumber;
+            return "";
         }
-        @Override public void deleteTask(int taskNumber, Ui ui) {
+        @Override public String deleteTask(int taskNumber, Ui ui) {
             deleteCalls++;
             lastIndex = taskNumber;
+            return "";
         }
     }
 

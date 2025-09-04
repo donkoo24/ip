@@ -36,15 +36,19 @@ public class Ui {
     /**
      * Displays a greeting message to the user.
      */
-    public void greet() {
-        System.out.println("Hello! I'm Lux\nWhat can I do for you today?\n");
+    public String greet() {
+        String greeting = "Hello! I'm Lux\nWhat can I do for you today?\n";
+        System.out.println(greeting);
+        return greeting;
     }
 
     /**
      * Displays a farewell message to the user.
      */
-    public void endConvo() {
-        System.out.println("Bye. Hope to see you again soon!");
+    public String endConvo() {
+        String farewell = "Bye. Hope to see you again soon!";
+        System.out.println(farewell);
+        return farewell;
     }
 
 

@@ -45,8 +45,9 @@ public class CommandParser {
         if (command.equalsIgnoreCase("bye")) {
             return new Command() {
                 @Override
-                public void execute(TaskList tasks, Ui ui) {
+                public String execute(TaskList tasks, Ui ui) {
                     StringBuilder saveData = new StringBuilder();
+                    String reply;
 
                     for (int i = 0; i < tasks.getSize(); i++) {
                         saveData.append(tasks.getTask(i)).append(System.lineSeparator());
@@ -55,10 +56,12 @@ public class CommandParser {
                     try {
                         SaveFileManager.updateSaveFile(saveData.toString());
                     } catch (IOException e) {
-                        ui.speak("Did not manage to save task data" + e.getMessage());
+                        reply = "Did not manage to save task data";
+                        ui.speak(reply + e.getMessage());
+                        return reply + e.getMessage();
                     }
 
-                    ui.endConvo();
+                    return ui.endConvo();
                 }
                 @Override
                 public boolean isExit() {
@@ -88,7 +91,7 @@ public class CommandParser {
                         throw new NoDescriptionException("bruh, task name cannot be empty la");
                     }
                     Task itemToAdd = new ToDo(toDoMatcher.group(2));
-                    tasks.addListItem(itemToAdd, ui);
+                    return tasks.addListItem(itemToAdd, ui);
                 };
             } else if (deadlineMatcher.find()) {
                 return (tasks, ui) -> {
@@ -98,7 +101,7 @@ public class CommandParser {
                         throw new NoDescriptionException("bruh, deadline cannot be empty la, if not go use todo");
                     }
                     Task itemToAdd = new Deadline(deadlineMatcher.group(2), deadlineMatcher.group(3));
-                    tasks.addListItem(itemToAdd, ui);
+                    return tasks.addListItem(itemToAdd, ui);
                 };
             } else if (eventMatcher.find()) {
                 return (tasks, ui) -> {
@@ -112,14 +115,14 @@ public class CommandParser {
                                 "bruh, end field cannot be empty la, if not go use deadline or todo");
                     }
                     Task itemToAdd = new Event(eventMatcher.group(2), eventMatcher.group(3), eventMatcher.group(4));
-                    tasks.addListItem(itemToAdd, ui);
+                    return tasks.addListItem(itemToAdd, ui);
                 };
             } else if (findMatcher.find()) {
                 return (tasks, ui) -> {
                     if (findMatcher.group(2).isBlank()) {
                         throw new NoDescriptionException("please indicate what you are searching for");
                     }
-                    tasks.findTask(findMatcher.group(2), ui);
+                    return tasks.findTask(findMatcher.group(2), ui);
                 };
             } else {
                 return (tasks, ui) -> {

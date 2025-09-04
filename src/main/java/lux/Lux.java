@@ -2,6 +2,7 @@ package lux;
 
 import java.io.IOException;
 
+import javafx.application.Platform;
 import lux.parser.Command;
 import lux.parser.CommandParser;
 import lux.repo.TaskList;
@@ -24,47 +25,28 @@ public class Lux {
     public Lux() {
         this.cp = new CommandParser();
         this.ui = new Ui();
-    }
-
-    /**
-     * Starts the application by greeting the user, loading save file, and then handles commands.
-     *
-     * @throws IOException if loading save file fails
-     */
-
-    public void run() throws IOException {
-        ui.greet();
-        SaveFileManager.loadTask(this.taskList);
-        handleConvo(ui, cp);
-    }
-
-    /**
-     * Program entry point.
-     *
-     * @param args CLI argument that is not used.
-     */
-
-    public static void main(String[] args) {
         try {
-            new Lux().run();
+            SaveFileManager.loadTask(this.taskList);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private void handleConvo(Ui ui, CommandParser cp) {
-
-        while (true) {
-            try {
-                String userInputInfo = ui.readline();
-                Command cmd = cp.parse(userInputInfo);
-                cmd.execute(taskList, ui);
-                if (cmd.isExit()) {
-                    break;
-                }
-            } catch (NoDescriptionException | NoCommandException e) {
-                ui.speak(e.getMessage());
+    /**
+     * Generates a response for the user's chat message.
+     */
+    public String getResponse(String input) {
+        try {
+            Command cmd = cp.parse(input);
+            String reply = cmd.execute(taskList, ui);
+            if (cmd.isExit()) {
+                return ui.endConvo();
+            } else {
+                return reply;
             }
+        } catch (NoDescriptionException | NoCommandException e) {
+            ui.speak(e.getMessage());
+            return e.getMessage();
         }
     }
 }
