@@ -17,7 +17,7 @@ public interface Command {
      * @throws NoDescriptionException If required arguments like description, deadline, start, or end is missing.
      * @throws NoCommandException If user gives an unknown command.
      */
-    void execute(TaskList tasks, Ui ui) throws NoDescriptionException, NoCommandException;
+    String execute(TaskList tasks, Ui ui) throws NoDescriptionException, NoCommandException;
 
     /**
      * Indicates whether to terminate programme code when a command is executed.
