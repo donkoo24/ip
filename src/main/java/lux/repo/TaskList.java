@@ -153,9 +153,10 @@ public class TaskList {
      * @param ui The Ui instance to notify user of matching tasks.
      */
     public String findTask(String taskName, Ui ui) {
-        Stream<Task> temp = taskList.stream();
-        List<Task> possibleTasks = temp.filter(x -> x.getTaskName().toLowerCase().contains(taskName)).toList();
+        Stream<Task> taskStream = taskList.stream();
+        List<Task> possibleTasks = taskStream.filter(x -> x.getTaskName().toLowerCase().contains(taskName)).toList();
         StringBuilder reply = new StringBuilder("Here are the matching tasks in your list:" + "\n");
+
         ui.speak(reply.toString());
         for (int i = 0; i < possibleTasks.size(); i++) {
             String message = String.format("%d. %s", i + 1, possibleTasks.get(i));
