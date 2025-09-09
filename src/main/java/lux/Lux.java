@@ -2,7 +2,6 @@ package lux;
 
 import java.io.IOException;
 
-import javafx.application.Platform;
 import lux.parser.Command;
 import lux.parser.CommandParser;
 import lux.repo.TaskList;
@@ -38,6 +37,7 @@ public class Lux {
     public String getResponse(String input) {
         try {
             Command cmd = cp.parse(input);
+            assert cmd != null : "cmd cannot be null";
             String reply = cmd.execute(taskList, ui);
             if (cmd.isExit()) {
                 return ui.endConvo();
