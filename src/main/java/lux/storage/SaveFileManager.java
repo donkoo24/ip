@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,6 +48,8 @@ public class SaveFileManager {
      * @throws IOException If writing to the file fails.
      */
     public static void updateSaveFile(String textToAdd) throws IOException {
+        assert !textToAdd.isEmpty() : "Can't update empty line to save file";
+
         FileWriter fw = new FileWriter(String.valueOf(PATH_SAVEFILE));
         fw.write(textToAdd);
         fw.close();
@@ -60,7 +61,9 @@ public class SaveFileManager {
      * start (if any), end (if any).
      */
     public static void loadData(List<Task> taskList) {
-        List<String> lines = new ArrayList<>();
+        assert taskList != null : "taskList cannot be null";
+
+        List<String> lines;
 
         try {
             lines = Files.readAllLines(PATH_SAVEFILE);
@@ -129,6 +132,8 @@ public class SaveFileManager {
      * @throws IOException If file reading fails.
      */
     public static void loadTask(TaskList taskList) throws IOException {
+        assert taskList != null : "taskList cannot be null";
+
         SaveFileManager.getOrCreateSaveFile();
         SaveFileManager.loadData(taskList.getList());
     }

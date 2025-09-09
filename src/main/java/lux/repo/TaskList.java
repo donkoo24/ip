@@ -28,7 +28,7 @@ public class TaskList {
     public String addListItem(Task t, Ui ui) {
         taskList.add(t);
         String reply = "Got it. I've added this task:\n"
-                + t.toString()
+                + t
                 + "\n"
                 + "Now you have "
                 + Task.getNumberOfTasks()
@@ -93,6 +93,7 @@ public class TaskList {
             return "Invalid Number";
         } else {
             Task actionTask = taskList.get(taskNumber - 1);
+            assert actionTask != null : "actionTask cannot be null";
             actionTask.markCompleted();
             String reply = "Nice! I've marked this task as done:\n" + actionTask + "\n";
             ui.speak(reply);
@@ -111,6 +112,7 @@ public class TaskList {
             return "Invalid Number";
         } else {
             Task actionTask = taskList.get(taskNumber - 1);
+            assert actionTask != null : "actionTask cannot be null";
             actionTask.unmarkCompleted();
             String reply = "Ok, I've marked this task as not done yet:\n" + actionTask + "\n";
             ui.speak(reply);
@@ -129,6 +131,7 @@ public class TaskList {
             return "Invalid Number";
         } else {
             Task removedTask = taskList.get(taskNumber - 1);
+            assert removedTask != null : "removedTask cannot be null";
             taskList.remove(taskNumber - 1);
             Task.reduceTaskCount();
             String reply = "Noted, I've removed this task:\n"
