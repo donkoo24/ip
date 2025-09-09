@@ -72,14 +72,13 @@ public class TaskList {
      * @param ui The Ui instance to display the tasks.
      */
     public String showList(Ui ui) {
-        StringBuilder reply = new StringBuilder("Here are the tasks in your list");
-        ui.speak(reply.toString());
+        StringBuilder reply = new StringBuilder("Here are the tasks in your list" + "\n");
+        ui.speak(String.valueOf(reply));
         for (int i = 0; i < taskList.size(); i++) {
             String message = String.format("%d. %s", i + 1, taskList.get(i));
-            System.out.println(message);
-            reply.append(String.format("\n" + "%s", message));
+            ui.speak(message);
+            reply.append(String.format("\n" + "%s", message + "\n"));
         }
-        System.out.print("\n");
         return reply.toString();
     }
 
@@ -96,8 +95,8 @@ public class TaskList {
             Task actionTask = taskList.get(taskNumber - 1);
             assert actionTask != null : "actionTask cannot be null";
             actionTask.markCompleted();
-            String reply = "Nice! I've marked this task as done:\n" + actionTask.toString();
-            ui.speak(reply + "\n");
+            String reply = "Nice! I've marked this task as done:\n" + actionTask + "\n";
+            ui.speak(reply);
             return reply;
         }
     }
@@ -115,8 +114,8 @@ public class TaskList {
             Task actionTask = taskList.get(taskNumber - 1);
             assert actionTask != null : "actionTask cannot be null";
             actionTask.unmarkCompleted();
-            String reply = "Ok, I've marked this task as not done yet:\n" + actionTask;
-            ui.speak(reply + "\n");
+            String reply = "Ok, I've marked this task as not done yet:\n" + actionTask + "\n";
+            ui.speak(reply);
             return reply;
         }
     }
@@ -161,10 +160,9 @@ public class TaskList {
         ui.speak(reply.toString());
         for (int i = 0; i < possibleTasks.size(); i++) {
             String message = String.format("%d. %s", i + 1, possibleTasks.get(i));
-            System.out.println(message);
-            reply.append(String.format("\n" + "%s", message));
+            ui.speak(message);
+            reply.append(String.format("\n" + "%s", message + "\n"));
         }
-        System.out.print("\n");
         return reply.toString();
     }
 }

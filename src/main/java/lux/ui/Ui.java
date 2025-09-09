@@ -30,7 +30,7 @@ public class Ui {
      * @param s The message to be displayed.
      */
     public void speak(String s) {
-        System.out.println(s + "\n");
+        System.out.println(s);
     }
 
     /**
