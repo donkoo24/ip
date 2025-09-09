@@ -25,7 +25,7 @@ public class ByeCommand implements Command {
             SaveFileManager.updateSaveFile(saveData.toString());
         } catch (IOException e) {
             reply = "Did not manage to save task data";
-            ui.speak(reply + e.getMessage());
+            ui.speak(reply + e.getMessage() + "\n");
             return reply + e.getMessage();
         }
 
