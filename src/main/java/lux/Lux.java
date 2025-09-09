@@ -28,7 +28,7 @@ public class Lux {
         try {
             SaveFileManager.loadTask(this.taskList);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            ui.speak(e.getMessage());
         }
     }
 
