@@ -1,6 +1,8 @@
 package lux.repo;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -13,6 +15,16 @@ import lux.ui.Ui;
  */
 public class TaskList {
     private static List<Task> taskList = new ArrayList<>();
+
+    /**
+     * Represents set of possible mass operation.
+     */
+    public enum MassTaskAction {
+        DELETE,
+        MARK,
+        UNMARK
+    }
+
 
     /**
      * Constructs a TaskList.
@@ -89,16 +101,10 @@ public class TaskList {
      * @param ui The Ui instance to notify user of task marking.
      */
     public String markTask(int taskNumber, Ui ui) {
-        if (taskNumber > taskList.size() || taskNumber <= 0) {
-            return "Invalid Number";
-        } else {
-            Task actionTask = taskList.get(taskNumber - 1);
-            assert actionTask != null : "actionTask cannot be null";
-            actionTask.markCompleted();
-            String reply = "Nice! I've marked this task as done:\n" + actionTask + "\n";
-            ui.speak(reply);
-            return reply;
-        }
+        Task actionTask = taskList.get(taskNumber - 1);
+        assert actionTask != null : "actionTask cannot be null";
+        actionTask.markCompleted();
+        return taskNumber + ". " + actionTask + "\n";
     }
 
     /**
@@ -108,42 +114,79 @@ public class TaskList {
      * @param ui The Ui instance to notify user of task unmarking.
      */
     public String unmarkTask(int taskNumber, Ui ui) {
-        if (taskNumber > taskList.size() || taskNumber <= 0) {
-            return "Invalid Number";
-        } else {
-            Task actionTask = taskList.get(taskNumber - 1);
-            assert actionTask != null : "actionTask cannot be null";
-            actionTask.unmarkCompleted();
-            String reply = "Ok, I've marked this task as not done yet:\n" + actionTask + "\n";
-            ui.speak(reply);
-            return reply;
+        Task actionTask = taskList.get(taskNumber - 1);
+        assert actionTask != null : "actionTask cannot be null";
+        actionTask.unmarkCompleted();
+        return taskNumber + ". " + actionTask + "\n";
+    }
+
+    /**
+     * Applies an operation on all indicated tasks.
+     * This operation is limited to mark, unmark and delete.
+     * This works for a single task.
+     *
+     * @param tasksToAct The array of tasks to act on.
+     * @param mta The action type of operation.
+     * @param ui The UI instance to notify user of mass operation.
+     * @return The notification to user about operation.
+     */
+
+    public String massOrSingleOps(int[] tasksToAct, MassTaskAction mta, Ui ui) {
+        StringBuilder reply = new StringBuilder();
+        StringBuilder actionTaskReply = new StringBuilder();
+        int taskListSize = taskList.size();
+        tasksToAct = Arrays
+                .stream(tasksToAct)
+                .boxed()
+                .sorted(Comparator.reverseOrder())
+                .mapToInt(x -> Integer.valueOf(x))
+                .toArray();
+
+        for (int taskNumber : tasksToAct) {
+            if (taskNumber > taskListSize || taskNumber <= 0) {
+                reply.append(taskNumber).append(" is an invalid number, no action taken.\n");
+            } else {
+                Task actionTask = taskList.get(taskNumber - 1);
+                assert actionTask != null : "removedTask cannot be null";
+
+                switch (mta) {
+                case DELETE:
+                    actionTaskReply.append(this.deleteTask(taskNumber, ui));
+                    break;
+                case MARK:
+                    actionTaskReply.append(this.markTask(taskNumber, ui));
+                    break;
+                case UNMARK:
+                    actionTaskReply.append(this.unmarkTask(taskNumber, ui));
+                    break;
+                default:
+                    break;
+                }
+            }
         }
+        reply = new StringBuilder("Noted, I've completed the following commands:\n"
+                + actionTaskReply
+                + "\n"
+                + "Now you have "
+                + Task.getNumberOfTasks()
+                + " task in the list"
+                + "\n");
+        ui.speak(reply.toString());
+        return reply.toString();
     }
 
     /**
      * Deletes the specified task.
      *
-     * @param taskNumber The index of task to delete.
+     * @param taskNumber The index of task to be deleted.
      * @param ui The Ui instance to notify user of task deletion.
      */
     public String deleteTask(int taskNumber, Ui ui) {
-        if (taskNumber > taskList.size() || taskNumber <= 0) {
-            return "Invalid Number";
-        } else {
-            Task removedTask = taskList.get(taskNumber - 1);
-            assert removedTask != null : "removedTask cannot be null";
-            taskList.remove(taskNumber - 1);
-            Task.reduceTaskCount();
-            String reply = "Noted, I've removed this task:\n"
-                    + removedTask.toString()
-                    + "\n"
-                    + "Now you have "
-                    + Task.getNumberOfTasks()
-                    + " task in the list"
-                    + "\n";
-            ui.speak(reply);
-            return reply;
-        }
+        Task removedTask = taskList.get(taskNumber - 1);
+        assert removedTask != null : "removedTask cannot be null";
+        taskList.remove(taskNumber - 1);
+        Task.reduceTaskCount();
+        return taskNumber + ". " + removedTask + "\n";
     }
 
     /**
