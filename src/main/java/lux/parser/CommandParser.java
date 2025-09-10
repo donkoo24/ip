@@ -3,25 +3,21 @@ package lux.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import lux.domain.Event;
-import lux.domain.Task;
-import lux.util.NoCommandException;
-import lux.util.NoDescriptionException;
-
 /**
  * Logic unit for recognising and handling command that is called by user.
  * This class uses regex to help with pattern recognition.
  */
 public class CommandParser {
-    private static final Pattern MARK_PATTERN = Pattern.compile("(^mark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern MARK_PATTERN = Pattern.compile(
+            "(^mark)\\s(\\d+(?:,\\s*\\d+)*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern UNMARK_PATTERN = Pattern.compile(
-            "^(unmark)\\s(\\d+)", Pattern.CASE_INSENSITIVE);
+            "^(unmark)\\s(\\d+(?:,\\s*\\d+)*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern TODO_PATTERN = Pattern.compile("(todo)\\s(.*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern DEADLINE_PATTERN = Pattern.compile(
             "(deadline)\\s(.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern EVENT_PATTERN = Pattern.compile(
             "(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private static final Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(\\d+(?:,\\s*\\d+)*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern FIND_PATTERN = Pattern.compile("(^find)\\s(.*)", Pattern.CASE_INSENSITIVE);
 
     /**
@@ -50,11 +46,11 @@ public class CommandParser {
             Matcher findMatcher = FIND_PATTERN.matcher(command);
 
             if (markMatcher.find()) {
-                return new MarkCommand(Integer.parseInt(markMatcher.group(2)));
+                return new MarkCommand(markMatcher.group(2));
             } else if (unmarkMatcher.find()) {
-                return new UnmarkCommand(Integer.parseInt(unmarkMatcher.group(2)));
+                return new UnmarkCommand(unmarkMatcher.group(2));
             } else if (deleteMatcher.find()) {
-                return new DeleteCommand(Integer.parseInt(deleteMatcher.group(2)));
+                return new DeleteCommand(deleteMatcher.group(2));
             } else if (toDoMatcher.find()) {
                 return new ToDoCommand(toDoMatcher.group(2));
             } else if (deadlineMatcher.find()) {
