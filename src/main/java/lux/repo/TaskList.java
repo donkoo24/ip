@@ -38,6 +38,7 @@ public class TaskList {
      * @param ui The Ui instance to notify user.
      */
     public String addListItem(Task t, Ui ui) {
+        assert t != null : "t cannot be null";
         taskList.add(t);
         String reply = "Got it. I've added this task:\n"
                 + t
@@ -66,6 +67,7 @@ public class TaskList {
      * @return The task object.
      */
     public Task getTask(int i) {
+        assert i >= 0 && i < taskList.size() : "i cannot be out of bounds of array list";
         return taskList.get(i);
     }
 
@@ -101,6 +103,7 @@ public class TaskList {
      * @param ui The Ui instance to notify user of task marking.
      */
     public String markTask(int taskNumber, Ui ui) {
+        assert taskNumber >= 0 && taskNumber < taskList.size() : "taskNumber cannot be out of bounds";
         Task actionTask = taskList.get(taskNumber - 1);
         assert actionTask != null : "actionTask cannot be null";
         actionTask.markCompleted();
@@ -114,6 +117,7 @@ public class TaskList {
      * @param ui The Ui instance to notify user of task unmarking.
      */
     public String unmarkTask(int taskNumber, Ui ui) {
+        assert taskNumber >= 0 && taskNumber < taskList.size() : "taskNumber cannot be out of bounds";
         Task actionTask = taskList.get(taskNumber - 1);
         assert actionTask != null : "actionTask cannot be null";
         actionTask.unmarkCompleted();
@@ -182,6 +186,7 @@ public class TaskList {
      * @param ui The Ui instance to notify user of task deletion.
      */
     public String deleteTask(int taskNumber, Ui ui) {
+        assert taskNumber >= 0 && taskNumber < taskList.size() : "taskNumber cannot be out of bounds";
         Task removedTask = taskList.get(taskNumber - 1);
         assert removedTask != null : "removedTask cannot be null";
         taskList.remove(taskNumber - 1);
