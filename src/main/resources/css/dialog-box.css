@@ -4,7 +4,8 @@
     -fx-border-width: 2px;
     -fx-background-radius: 1em 1em 0 1em;
     -fx-border-radius: 1em 1em 0 1em;
-    -fx-border-radius: 100px;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
 }
 
 .reply-label {
