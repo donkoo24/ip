@@ -139,16 +139,14 @@ public class TaskList {
         StringBuilder reply = new StringBuilder();
         StringBuilder actionTaskReply = new StringBuilder();
         int taskListSize = taskList.size();
-        tasksToAct = Arrays
-                .stream(tasksToAct)
-                .boxed()
-                .sorted(Comparator.reverseOrder())
-                .mapToInt(x -> Integer.valueOf(x))
-                .toArray();
+        tasksToAct = Arrays.stream(tasksToAct).boxed().sorted(Comparator.reverseOrder())
+                .mapToInt(x -> Integer.valueOf(x)).toArray();
 
         for (int taskNumber : tasksToAct) {
             if (taskNumber > taskListSize || taskNumber <= 0) {
                 reply.append(taskNumber).append(" is an invalid number, no action taken.\n");
+                ui.speak(reply.toString());
+                return reply.toString();
             } else {
                 Task actionTask = taskList.get(taskNumber - 1);
                 assert actionTask != null : "removedTask cannot be null";
@@ -169,12 +167,7 @@ public class TaskList {
             }
         }
         reply = new StringBuilder("Noted, I've completed the following commands:\n"
-                + actionTaskReply
-                + "\n"
-                + "Now you have "
-                + Task.getNumberOfTasks()
-                + " task in the list"
-                + "\n");
+                + actionTaskReply + "\n" + "Now you have " + Task.getNumberOfTasks() + " task in the list" + "\n");
         ui.speak(reply.toString());
         return reply.toString();
     }

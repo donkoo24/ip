@@ -15,6 +15,14 @@ public class UnmarkCommand implements Command {
         this.taskIndices = taskIndices;
     }
 
+    /**
+     * Unmark tasks by parsing provided indices and marking each as incomplete.
+     *
+     * @param tasks The taskList containing tasks to unmark; must not be null
+     * @param ui    The UI instance for user feedback; must not be null
+     * @return a status message from the TaskList after performing the unmark action
+     */
+
     @Override
     public String execute(TaskList tasks, Ui ui) {
         int[] taskIndices = Arrays.stream(this.taskIndices.split(",\\s*")).mapToInt(x -> Integer.parseInt(x)).toArray();

@@ -11,6 +11,14 @@ import lux.ui.Ui;
  */
 public class ByeCommand implements Command {
 
+    /**
+     * Writes out all tasks to save file, and ends the conversation in the UI.
+     *
+     * @param tasks The task list containing all tasks to be saved.
+     * @param ui    The UI instance used to communicate with the user.
+     * @return the farewell message if save succeeds, or an error message if saving fails.
+     */
+
     @Override
     public String execute(TaskList tasks, Ui ui) {
         StringBuilder saveData = new StringBuilder();
@@ -32,6 +40,11 @@ public class ByeCommand implements Command {
         return ui.endConvo();
     }
 
+    /**
+     * Indicates if this command will terminate application.
+     *
+     * @return true as this command will cause program to exit.
+     */
     @Override
     public boolean isExit() {
         return true;

@@ -22,6 +22,10 @@ import lux.repo.TaskList;
 public class SaveFileManager {
     private static final Path PATH_SAVEFILEDIRECTORY = Paths.get("./data/");
     private static final Path PATH_SAVEFILE = Paths.get("./data/Lux.txt");
+    private static final Pattern DATA_PATTERN = Pattern.compile(
+            "^\\[(T|D|E)]\\[(.)] (.*?)"
+            + "(?: \\(by: (.*?)\\)| \\(from: (.*?) to: (.*?)\\))?$"
+            );
 
     /**
      * Constructs a SaveFileManager.
@@ -64,13 +68,8 @@ public class SaveFileManager {
     public static void loadData(List<Task> taskList) {
         assert taskList != null : "taskList cannot be null";
 
-        Pattern p = Pattern.compile(
-                "^\\[(T|D|E)]\\[(.)] (.*?)"
-                        + "(?: \\(by: (.*?)\\)| \\(from: (.*?) to: (.*?)\\))?$"
-        );
-
         try (Stream<String> lines = Files.lines(PATH_SAVEFILE)) {
-            lines.map(p::matcher)
+            lines.map(DATA_PATTERN::matcher)
                     .filter(Matcher::matches)
                     .map(m -> {
                         Task t;
