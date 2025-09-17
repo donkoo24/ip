@@ -1,5 +1,7 @@
 package lux.parser;
 
+import java.util.List;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +21,24 @@ public class CommandParser {
             "(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(\\d+(?:,\\s*\\d+)*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern FIND_PATTERN = Pattern.compile("(^find)\\s(.*)", Pattern.CASE_INSENSITIVE);
+    private record Entry(Pattern pattern,
+                         Function<Matcher, Command> factory) {}
+
+    private static final List<Entry> ENTRIES = List.of(
+            new Entry(Pattern.compile("(?i)^bye$"),
+                    m -> new ByeCommand()),
+            new Entry(Pattern.compile("(?i)^list$"),
+                    m -> new ListCommand()),
+            new Entry(MARK_PATTERN, m -> new MarkCommand(m.group(2))),
+            new Entry(UNMARK_PATTERN, m -> new UnmarkCommand(m.group(2))),
+            new Entry(DELETE_PATTERN, m -> new DeleteCommand(m.group(2))),
+            new Entry(TODO_PATTERN, m -> new ToDoCommand(m.group(2))),
+            new Entry(DEADLINE_PATTERN,
+                    m -> new DeadlineCommand(m.group(2), m.group(3))),
+            new Entry(EVENT_PATTERN,
+                    m -> new EventCommand(m.group(2), m.group(3), m.group(4))),
+            new Entry(FIND_PATTERN, m -> new FindCommand(m.group(2)))
+    );
 
     /**
      * Constructs a CommandParser.
@@ -32,36 +52,12 @@ public class CommandParser {
      * @return a Command representing what the user wants to do, executing it applies the effects.
      */
     public Command parse(String command) {
-        if (command.equalsIgnoreCase("bye")) {
-            return new ByeCommand();
-        } else if (command.equalsIgnoreCase("list")) {
-            return new ListCommand();
-        } else {
-            Matcher markMatcher = MARK_PATTERN.matcher(command);
-            Matcher unmarkMatcher = UNMARK_PATTERN.matcher(command);
-            Matcher deleteMatcher = DELETE_PATTERN.matcher(command);
-            Matcher toDoMatcher = TODO_PATTERN.matcher(command);
-            Matcher deadlineMatcher = DEADLINE_PATTERN.matcher(command);
-            Matcher eventMatcher = EVENT_PATTERN.matcher(command);
-            Matcher findMatcher = FIND_PATTERN.matcher(command);
-
-            if (markMatcher.find()) {
-                return new MarkCommand(markMatcher.group(2));
-            } else if (unmarkMatcher.find()) {
-                return new UnmarkCommand(unmarkMatcher.group(2));
-            } else if (deleteMatcher.find()) {
-                return new DeleteCommand(deleteMatcher.group(2));
-            } else if (toDoMatcher.find()) {
-                return new ToDoCommand(toDoMatcher.group(2));
-            } else if (deadlineMatcher.find()) {
-                return new DeadlineCommand(deadlineMatcher.group(2), deadlineMatcher.group(3));
-            } else if (eventMatcher.find()) {
-                return new EventCommand(eventMatcher.group(2), eventMatcher.group(3), eventMatcher.group(4));
-            } else if (findMatcher.find()) {
-                return new FindCommand(findMatcher.group(2));
-            } else {
-                return new UnknownCommand();
+        for (Entry e : ENTRIES) {
+            Matcher matcher = e.pattern.matcher(command);
+            if (matcher.find()) {
+                return e.factory.apply(matcher);
             }
         }
+        return new UnknownCommand();
     }
 }
