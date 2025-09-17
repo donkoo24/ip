@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import lux.domain.Deadline;
 import lux.domain.Event;
@@ -63,62 +64,28 @@ public class SaveFileManager {
     public static void loadData(List<Task> taskList) {
         assert taskList != null : "taskList cannot be null";
 
-        List<String> lines;
+        Pattern p = Pattern.compile(
+                "^\\[(T|D|E)]\\[(.)] (.*?)"
+                        + "(?: \\(by: (.*?)\\)| \\(from: (.*?) to: (.*?)\\))?$"
+        );
 
-        try {
-            lines = Files.readAllLines(PATH_SAVEFILE);
-
-            for (String line : lines) {
-                if (line.startsWith("[T]")) {
-                    Pattern pattern = Pattern.compile("\\[(.)\\]\\[(.)\\]\\s(.*)");
-                    Matcher matcher = pattern.matcher(line);
-
-                    if (matcher.matches()) {
-                        String taskName = matcher.group(3);
-                        String taskMark = matcher.group(2);
-
-                        ToDo itemToAdd = new ToDo(taskName);
-
-                        if (taskMark.equals("X")) {
-                            itemToAdd.markCompleted();
+        try (Stream<String> lines = Files.lines(PATH_SAVEFILE)) {
+            lines.map(p::matcher)
+                    .filter(Matcher::matches)
+                    .map(m -> {
+                        Task t;
+                        switch (m.group(1)) {
+                        case "T" -> t = new ToDo(m.group(3));
+                        case "D" -> t = new Deadline(m.group(3), m.group(4));
+                        case "E" -> t = new Event(m.group(3), m.group(5), m.group(6));
+                        default -> throw new IllegalStateException();
                         }
-                        taskList.add(itemToAdd);
-                    }
-                } else if (line.startsWith("[D]")) {
-                    Pattern pattern = Pattern.compile("\\[(.)\\]\\[(.)\\]\\s(.*)\\s\\(by:\\s(.*)\\)");
-                    Matcher matcher = pattern.matcher(line);
-
-                    if (matcher.matches()) {
-                        String taskName = matcher.group(3);
-                        String taskMark = matcher.group(2);
-                        String taskDeadline = matcher.group(4);
-
-                        Deadline itemToAdd = new Deadline(taskName, taskDeadline);
-
-                        if (taskMark.equals("X")) {
-                            itemToAdd.markCompleted();
+                        if ("X".equals(m.group(2))) {
+                            t.markCompleted();
                         }
-                        taskList.add(itemToAdd);
-                    }
-                } else if (line.startsWith("[E]")) {
-                    Pattern pattern = Pattern.compile(
-                            "\\[(.)\\]\\[(.)\\]\\s(.*)\\s\\(from:\\s(.*)\\sto:\\s(.*)\\)");
-                    Matcher matcher = pattern.matcher(line);
-                    if (matcher.matches()) {
-                        String taskName = matcher.group(3);
-                        String taskMark = matcher.group(2);
-                        String taskFrom = matcher.group(4);
-                        String taskTo = matcher.group(5);
-
-                        Event itemToAdd = new Event(taskName, taskFrom, taskTo);
-
-                        if (taskMark.equals("X")) {
-                            itemToAdd.markCompleted();
-                        }
-                        taskList.add(itemToAdd);
-                    }
-                }
-            }
+                        return t;
+                    })
+                    .forEach(taskList::add);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }

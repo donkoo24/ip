@@ -19,7 +19,8 @@ public class CommandParser {
             "(deadline)\\s(.*)\\s/by\\s(.*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern EVENT_PATTERN = Pattern.compile(
             "(event)\\s(.*)\\s/from\\s(.*)\\s/to\\s(.*)", Pattern.CASE_INSENSITIVE);
-    private static final Pattern DELETE_PATTERN = Pattern.compile("(delete)\\s(\\d+(?:,\\s*\\d+)*)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern DELETE_PATTERN = Pattern.compile(
+            "(delete)\\s(\\d+(?:,\\s*\\d+)*)", Pattern.CASE_INSENSITIVE);
     private static final Pattern FIND_PATTERN = Pattern.compile("(^find)\\s(.*)", Pattern.CASE_INSENSITIVE);
     private record Entry(Pattern pattern,
                          Function<Matcher, Command> factory) {}
