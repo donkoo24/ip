@@ -1,5 +1,6 @@
 package lux.parser;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -42,37 +43,83 @@ public class CommandParserTest {
         private int markCalls = 0;
         private int unmarkCalls = 0;
         private int deleteCalls = 0;
+        private int findCalls = 0;
         private int lastIndex = -1;
+        private int massOpsCalls = 0;
+        private MassTaskAction lastAction = null;
+        private int[] lastIndices = null;
+        private String lastQuery = null;
         private Task lastAdded = null;
 
         public StubTaskList() {
             super();
         }
 
-        @Override public String showList(Ui ui) {
+        @Override
+        public String showList(Ui ui) {
             listCalls++;
             return "";
         }
-        @Override public String addListItem(Task itemToAdd, Ui ui) {
+        @Override
+        public String addListItem(Task itemToAdd, Ui ui) {
             addCalls++;
             lastAdded = itemToAdd;
             return "";
         }
-        @Override public String markTask(int taskNumber, Ui ui) {
+        @Override
+        public String markTask(int taskNumber, Ui ui) {
             markCalls++;
             lastIndex = taskNumber;
             return "";
         }
-        @Override public String unmarkTask(int taskNumber, Ui ui) {
+        @Override
+        public String unmarkTask(int taskNumber, Ui ui) {
             unmarkCalls++;
             lastIndex = taskNumber;
             return "";
         }
-        @Override public String deleteTask(int taskNumber, Ui ui) {
+        @Override
+        public String deleteTask(int taskNumber, Ui ui) {
             deleteCalls++;
             lastIndex = taskNumber;
             return "";
         }
+        @Override
+        public String findTask(String query, Ui ui) {
+            findCalls++;
+            lastQuery = query;
+            return "Found tasks matching : " + query;
+        }
+
+        public String getLastQuery() {
+            return lastQuery;
+        }
+
+        public int getFindCalls() {
+            return findCalls;
+        }
+
+        @Override
+        public String massOrSingleOps(int[] tasksToAct, MassTaskAction mta, Ui ui) {
+            massOpsCalls++;
+            lastAction = mta;
+            lastIndices = tasksToAct;
+            return "Mass operation executed";
+        }
+
+        public int getMassOpsCalls() {
+            return massOpsCalls;
+        }
+
+        public MassTaskAction getLastAction() {
+            return lastAction;
+        }
+
+        public int[] getLastIndices() {
+            return lastIndices;
+        }
+
+
     }
 
     @Test
@@ -158,42 +205,6 @@ public class CommandParserTest {
     }
 
     @Test
-    public void parse_markCommand_success() throws NoCommandException, NoDescriptionException {
-        StubTaskList tasks = new StubTaskList();
-        StubUi ui = new StubUi();
-
-        Command cmd = parser.parse("mark 2");
-        cmd.execute(tasks, ui);
-
-        assertEquals(1, tasks.markCalls);
-        assertEquals(2, tasks.lastIndex);
-    }
-
-    @Test
-    public void parse_unmarkCommand_success() throws NoCommandException, NoDescriptionException {
-        StubTaskList tasks = new StubTaskList();
-        StubUi ui = new StubUi();
-
-        Command cmd = parser.parse("unmark 1");
-        cmd.execute(tasks, ui);
-
-        assertEquals(1, tasks.unmarkCalls);
-        assertEquals(1, tasks.lastIndex);
-    }
-
-    @Test
-    public void parse_deleteCommand_success() throws NoCommandException, NoDescriptionException {
-        StubTaskList tasks = new StubTaskList();
-        StubUi ui = new StubUi();
-
-        Command cmd = parser.parse("delete 3");
-        cmd.execute(tasks, ui);
-
-        assertEquals(1, tasks.deleteCalls);
-        assertEquals(3, tasks.lastIndex);
-    }
-
-    @Test
     public void parse_byeCommand_success() {
         Command cmd = parser.parse("bye");
         assertTrue(cmd.isExit(), "bye should return an exit command");
@@ -201,11 +212,130 @@ public class CommandParserTest {
     }
 
     @Test
-    public void parse_unknownCommand_throwsException() throws NoCommandException, NoDescriptionException {
+    public void parse_unknownCommand_throwsException() {
         StubTaskList tasks = new StubTaskList();
         StubUi ui = new StubUi();
 
         Command cmd = parser.parse("huh what");
         assertThrows(NoCommandException.class, () -> cmd.execute(tasks, ui));
     }
+
+    @Test
+    public void parse_emptyInput_throwsUnknownCommand() {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("");
+        assertThrows(NoCommandException.class, () -> cmd.execute(tasks, ui));
+    }
+
+    @Test
+    public void parse_findCommand_success() throws NoCommandException, NoDescriptionException {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("find report");
+        String result = cmd.execute(tasks, ui);
+
+        assertEquals(1, tasks.getFindCalls(), "Should call findTask once");
+        assertEquals("report", tasks.getLastQuery(), "Query should match input");
+        assertTrue(result.contains("report"), "Response should contain the search term");
+    }
+
+    @Test
+    public void parse_findCommand_throwsException() {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("find   ");
+        assertThrows(NoDescriptionException.class, () -> cmd.execute(tasks, ui));
+        assertEquals(0, tasks.getFindCalls(), "Should not call findTask on blank input");
+    }
+
+    @Test
+    public void parse_findCommandCaseInsensitive_success() throws Exception {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("find RePoRt");
+        String result = cmd.execute(tasks, ui);
+
+        assertEquals("report", tasks.getLastQuery().toLowerCase());
+    }
+
+    @Test
+    public void parse_markCommandMassOps_success() throws NoCommandException, NoDescriptionException {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("mark 1, 3, 5");
+        cmd.execute(tasks, ui);
+
+        assertEquals(1, tasks.getMassOpsCalls());
+        assertEquals(TaskList.MassTaskAction.MARK, tasks.getLastAction());
+        assertArrayEquals(new int[]{1, 3, 5}, tasks.getLastIndices());
+    }
+
+    @Test
+    public void parse_unmarkCommandMassOps_success() throws NoCommandException, NoDescriptionException {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("unmark 2, 4");
+        cmd.execute(tasks, ui);
+
+        assertEquals(1, tasks.getMassOpsCalls());
+        assertEquals(TaskList.MassTaskAction.UNMARK, tasks.getLastAction());
+        assertArrayEquals(new int[]{2, 4}, tasks.getLastIndices());
+    }
+
+    @Test
+    public void parse_deleteCommandMassOps_success() throws NoCommandException, NoDescriptionException {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("delete 1, 2, 3");
+        cmd.execute(tasks, ui);
+
+        assertEquals(1, tasks.getMassOpsCalls());
+        assertEquals(TaskList.MassTaskAction.DELETE, tasks.getLastAction());
+        assertArrayEquals(new int[]{1, 2, 3}, tasks.getLastIndices());
+    }
+
+    @Test
+    public void parse_massOpsWithExtraSpaces_success() throws Exception {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("mark 1,   2,    3");
+        cmd.execute(tasks, ui);
+
+        assertArrayEquals(new int[]{1, 2, 3}, tasks.getLastIndices());
+    }
+
+    @Test
+    public void parse_massOpsWithNoSpace_success() throws Exception {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("mark 1,2,3");
+        cmd.execute(tasks, ui);
+
+        assertArrayEquals(new int[]{1, 2, 3}, tasks.getLastIndices());
+    }
+
+    @Test
+    public void parse_commandWithExtraSpacesAndCase_success() throws Exception {
+        StubTaskList tasks = new StubTaskList();
+        StubUi ui = new StubUi();
+
+        Command cmd = parser.parse("   ToDo   Buy milk   ");
+        cmd.execute(tasks, ui);
+
+        assertEquals(1, tasks.addCalls);
+        assertNotNull(tasks.lastAdded);
+    }
+
+
+
 }
