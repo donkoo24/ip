@@ -21,7 +21,7 @@ public class CommandParserTest {
 
     static class StubUi extends Ui {
         final List<String> results = new ArrayList<>();
-        private boolean ended = false;
+        private boolean isEnded = false;
 
         public StubUi() {
             super();
@@ -31,7 +31,7 @@ public class CommandParserTest {
             results.add(s);
         }
         @Override public String endConvo() {
-            ended = true;
+            isEnded = true;
             return "";
         }
     }
