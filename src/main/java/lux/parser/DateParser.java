@@ -27,7 +27,7 @@ public class DateParser {
      * @param date The raw date input as a String
      * @return a Parsed Date
      */
-    public static ParsedDate parseDate(String date) {
+    public static ParsedDate parseDate(String date) throws IllegalArgumentException {
         for (DateTimeFormatter formatter : SUPPORTED_FORMATS) {
             try {
                 return new ParsedDate(LocalDate.parse(date, formatter), formatter);

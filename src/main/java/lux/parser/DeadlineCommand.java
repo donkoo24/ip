@@ -20,7 +20,8 @@ public class DeadlineCommand implements Command {
     }
 
     @Override
-    public String execute(TaskList tasks, Ui ui) throws NoDescriptionException, NoCommandException {
+    public String execute(
+            TaskList tasks, Ui ui) throws NoDescriptionException, NoCommandException, IllegalArgumentException {
         if (this.taskName.isBlank()) {
             throw new NoDescriptionException("bruh, task name cannot be empty la");
         } else if (this.deadline.isBlank()) {

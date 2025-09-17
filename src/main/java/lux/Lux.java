@@ -44,7 +44,7 @@ public class Lux {
             } else {
                 return reply;
             }
-        } catch (NoDescriptionException | NoCommandException e) {
+        } catch (NoDescriptionException | NoCommandException | IllegalArgumentException e) {
             ui.speak(e.getMessage());
             return e.getMessage();
         }
