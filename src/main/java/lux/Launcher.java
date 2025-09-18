@@ -1,3 +1,5 @@
+package lux;
+
 import javafx.application.Application;
 
 /**

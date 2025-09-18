@@ -43,12 +43,16 @@ test {
 }
 
 application {
-    mainClass.set("Launcher")
+    mainClass.set("lux.Launcher")
 }
 
 shadowJar {
     archiveBaseName = "lux"
     archiveClassifier = null
+    manifest {
+        attributes 'Main-Class': 'lux.Launcher'
+    }
+
 }
 
 run{
