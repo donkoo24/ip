@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class DateParser {
     private static final List<DateTimeFormatter> SUPPORTED_FORMATS = new ArrayList<>(List.of(
-            DateTimeFormatter.ofPattern("d/MM/yyyy"),
+            DateTimeFormatter.ofPattern("d/M/yyyy"),
             DateTimeFormatter.ISO_LOCAL_DATE,
             DateTimeFormatter.ofPattern("MMM d yyyy")
     ));
