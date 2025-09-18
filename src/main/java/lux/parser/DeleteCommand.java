@@ -28,7 +28,8 @@ public class DeleteCommand implements Command {
      */
     @Override
     public String execute(TaskList tasks, Ui ui) {
-        int[] taskIndices = Arrays.stream(this.taskIndices.split(",\\s*")).mapToInt(x -> Integer.parseInt(x)).toArray();
+        int[] taskIndices = Arrays
+                .stream(this.taskIndices.split(",\\s*")).mapToInt(x -> Integer.parseInt(x)).toArray();
         return tasks.massOrSingleOps(taskIndices, TaskList.MassTaskAction.DELETE, ui);
     }
 }
