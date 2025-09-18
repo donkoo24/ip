@@ -105,7 +105,7 @@ Format:
 
 Example:
 - `find groceries`
-- 
+
 ### Exiting Lux
 Format: 
 > bye
